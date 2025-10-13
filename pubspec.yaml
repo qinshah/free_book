@@ -1,14 +1,34 @@
 name: free_book
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
   sdk: ^3.8.1
 
 dependencies:
+  appflowy_editor: ^6.1.0 # 编辑器
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  provider: ^6.1.5+1 # appflowy_editor用到
+  file_selector: # 文件选择器.鸿蒙移植版
+    git:
+      url: https://gitcode.com/openharmony-tpc/flutter_packages.git
+      path: packages/file_selector/file_selector
+      ref: br_file_selector-v1.0.3_ohos
+  fluttertoast: # 系统级toast提示.鸿蒙移植版
+    git:
+      url: https://gitcode.com/openharmony-sig/flutter_fluttertoast.git
+      ref: br_fluttertoast_v8.2.11_ohos
+
+dependency_overrides:
+  url_launcher: # appflowy_editor用到.鸿蒙移植版
+    git:
+      url: https://gitcode.com/openharmony-tpc/flutter_packages.git
+      path: packages/url_launcher/url_launcher
+      ref: br_url_launcher_v6.3.1_ohos
 
 dev_dependencies:
   flutter_test:
