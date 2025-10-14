@@ -1,7 +1,10 @@
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:flutter/material.dart';
 
+import '../../../function/logic_builder.dart';
 import 'desktop_editor.dart';
+import 'editor_logic.dart';
+import 'editor_state.dart';
 
 class EditorView extends StatefulWidget {
   const EditorView({super.key, this.textDirection = TextDirection.ltr});
@@ -59,60 +62,68 @@ class _EditorViewState extends State<EditorView>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Stack(
-      children: [
-        ColoredBox(
-          color: Colors.white,
-          child: Builder(
-            builder: (context) {
-              if (!_isInitialized || _editorState == null) {
-                _isInitialized = true;
-                EditorState editorState = EditorState(
-                  document: Document.blank(),
-                );
+    return StateBuilder(
+      logic: EditorLogic(MyEditorState()),
+      builder: (context, state, logic) {
+        return Stack(
+          children: [
+            ColoredBox(
+              color: Colors.white,
+              child: Builder(
+                builder: (context) {
+                  if (!_isInitialized || _editorState == null) {
+                    _isInitialized = true;
+                    EditorState editorState = EditorState(
+                      document: Document.blank(),
+                    );
 
-                editorState.logConfiguration
-                  ..handler = debugPrint
-                  ..level = AppFlowyEditorLogLevel.all;
+                    editorState.logConfiguration
+                      ..handler = debugPrint
+                      ..level = AppFlowyEditorLogLevel.all;
 
-                _editorState = editorState;
-                registerWordCounter();
-              }
+                    _editorState = editorState;
+                    registerWordCounter();
+                  }
 
-              return DesktopEditor(
-                editorState: _editorState!,
-                textDirection: widget.textDirection,
-              );
-            },
-          ),
-        ),
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(8),
+                  return DesktopEditor(
+                    editorState: _editorState!,
+                    textDirection: widget.textDirection,
+                  );
+                },
               ),
             ),
-            child: Column(
-              children: [
-                Text(
-                  'Word Count: $wordCount  |  Character Count: $charCount',
-                  style: const TextStyle(fontSize: 11),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 2,
+                  horizontal: 12,
                 ),
-                if (!(_editorState?.selection?.isCollapsed ?? true))
-                  Text(
-                    '(In-selection) Word Count: $selectedWordCount  |  Character Count: $selectedCharCount',
-                    style: const TextStyle(fontSize: 11),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(8),
                   ),
-              ],
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      'Word Count: $wordCount  |  Character Count: $charCount',
+                      style: const TextStyle(fontSize: 11),
+                    ),
+                    if (!(_editorState?.selection?.isCollapsed ?? true))
+                      Text(
+                        '(In-selection) Word Count: $selectedWordCount  |  Character Count: $selectedCharCount',
+                        style: const TextStyle(fontSize: 11),
+                      ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 
-
 import '../../function/logic_builder.dart';
 import 'edit_page_logic.dart';
 import 'edit_page_state.dart';
 import 'editor/editor_view.dart';
 
-// part '../../widget/appflowy/data.appflowy.dart';
-
 class EditPageView extends StatelessWidget {
   const EditPageView({super.key, required this.editPageState});
-  const EditPageView.empty({super.key})
-    : editPageState = const EditPageState.empty();
+  const EditPageView.empty({super.key}) : editPageState = const EditPageState();
 
   final EditPageState editPageState;
 
