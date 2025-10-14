@@ -1,4 +1,4 @@
-part of 'appflowy_page.dart';
+part of '../../module/edit/edit_page.dart';
 
 const _jsonString = '''
 {

@@ -1,62 +1,26 @@
-import 'package:flutter/material.dart';
-
-import 'dart:convert';
-
 import 'package:appflowy_editor/appflowy_editor.dart';
+import 'package:flutter/material.dart';
 
 import 'desktop_editor.dart';
 
-part 'data.appflowy.dart';
-
-class AppflowyPage extends StatefulWidget {
-  const AppflowyPage({super.key});
-
-  @override
-  State<AppflowyPage> createState() => _AppflowyPageState();
-}
-
-class _AppflowyPageState extends State<AppflowyPage> {
-  OverlayEntry? overlayEntry;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Appflowy编辑器')),
-      body: _Editor(
-        jsonString: _jsonString,
-        textDirection: TextDirection.ltr,
-      ),
-    );
-  }
-}
-
-class _Editor extends StatefulWidget {
-  const _Editor({
-    required this.jsonString,
-    this.textDirection = TextDirection.ltr,
-  });
-
-  final String jsonString;
+class EditorView extends StatefulWidget {
+  const EditorView({super.key, this.textDirection = TextDirection.ltr});
 
   final TextDirection textDirection;
 
   @override
-  State<_Editor> createState() => _EditorState();
+  State<EditorView> createState() => _EditorViewState();
 }
 
-class _EditorState extends State<_Editor> {
+class _EditorViewState extends State<EditorView>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   bool _isInitialized = false;
 
   EditorState? _editorState;
   WordCountService? _wordCountService;
-
-  @override
-  void didUpdateWidget(covariant _Editor oldWidget) {
-    if (oldWidget.jsonString != widget.jsonString) {
-      _editorState = null;
-      _isInitialized = false;
-    }
-    super.didUpdateWidget(oldWidget);
-  }
 
   int wordCount = 0;
   int charCount = 0;
@@ -94,6 +58,7 @@ class _EditorState extends State<_Editor> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Stack(
       children: [
         ColoredBox(
@@ -103,9 +68,7 @@ class _EditorState extends State<_Editor> {
               if (!_isInitialized || _editorState == null) {
                 _isInitialized = true;
                 EditorState editorState = EditorState(
-                  document: Document.fromJson(
-                    Map<String, Object>.from(json.decode(widget.jsonString)),
-                  ),
+                  document: Document.blank(),
                 );
 
                 editorState.logConfiguration
