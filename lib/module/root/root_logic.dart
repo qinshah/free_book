@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../function/state_management.dart';
 import 'root_state.dart';
 
-class RootLogic extends Logic<RootState> {
+class RootLogic extends Logic1<RootState> {
   RootLogic(super.state);
 
   Future<void> changePage(int value) async {

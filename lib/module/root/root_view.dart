@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../data_model/page.dart';
 import '../../function/state_management.dart';
+import '../edit/edit_page_view.dart';
 import '../settings/settings_page.dart';
 import 'root_logic.dart';
 import 'root_state.dart';
@@ -15,14 +16,19 @@ class RootView extends StatefulWidget {
 
 class _RootViewState extends State<RootView>
     with LogicMix<RootView, RootLogic> {
-  final _pages = const [
+  final _pages = const {
     AppPage(
       name: '首页',
       icon: Icon(Icons.home),
       view: Center(child: Text('首页')),
     ),
+    AppPage(
+      name: '快速新建',
+      icon: Icon(Icons.create_outlined),
+      view: EditPageView.empty(),
+    ),
     AppPage(name: '设置', icon: Icon(Icons.settings), view: SettingsPage()),
-  ];
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +43,7 @@ class _RootViewState extends State<RootView>
             body: _buildPage(pageIndex, Axis.horizontal),
             bottomNavigationBar: BottomNavigationBar(
               currentIndex: pageIndex,
-              onTap: (index) => logic.changePage(index),
+              onTap: logic.changePage,
               items: _pages.map((page) {
                 return BottomNavigationBarItem(
                   icon: page.icon,
@@ -53,7 +59,7 @@ class _RootViewState extends State<RootView>
               NavigationRail(
                 selectedIndex: pageIndex,
                 labelType: NavigationRailLabelType.all,
-                onDestinationSelected: (index) => logic.changePage(index),
+                onDestinationSelected: logic.changePage,
                 destinations: _pages.map((item) {
                   return NavigationRailDestination(
                     icon: item.icon,
@@ -76,7 +82,7 @@ class _RootViewState extends State<RootView>
       physics: NeverScrollableScrollPhysics(),
       itemCount: _pages.length,
       itemBuilder: (BuildContext context, int index) {
-        return _pages[index].view;
+        return _pages.toList()[index].view;
       },
     );
   }
