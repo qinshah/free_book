@@ -3,10 +3,10 @@ import 'package:flutter/widgets.dart';
 
 abstract class ViewState {}
 
-abstract class Logic<T extends ViewState> {
-  static final _values = <String, Logic>{};
+abstract class Logic1<T extends ViewState> {
+  static final _values = <String, Logic1>{};
 
-  static LT find<LT extends Logic>() {
+  static LT find<LT extends Logic1>() {
     final key = LT.toString();
     assert(
       _values.containsKey(key),
@@ -16,12 +16,11 @@ abstract class Logic<T extends ViewState> {
   }
 
   late final void Function(VoidCallback fn) setState;
-  late final void Function(Logic logic) update;
+  late final void Function(Logic1 logic) update;
   T state;
-  Logic(this.state) {
+  Logic1(this.state) {
     final key = runtimeType.toString();
-    print('logic($key)实例化');
-    if (_values.containsKey(key)) print('警告⚠️：logic($key)被重复实例化');
+    if (_values.containsKey(key)) debugPrint('警告⚠️：logic($key)被重复实例化');
     _values[key] = this;
   }
 
@@ -32,7 +31,7 @@ abstract class Logic<T extends ViewState> {
   void dispose();
 }
 
-mixin LogicMix<STF extends StatefulWidget, T extends Logic> on State<STF> {
+mixin LogicMix<STF extends StatefulWidget, T extends Logic1> on State<STF> {
   late final T logic = createLogic();
 
   T createLogic();
@@ -48,7 +47,7 @@ mixin LogicMix<STF extends StatefulWidget, T extends Logic> on State<STF> {
   @override
   void dispose() {
     super.dispose();
-    Logic._values.remove(logic.runtimeType.toString());
+    Logic1._values.remove(logic.runtimeType.toString());
     logic.dispose();
   }
 }
