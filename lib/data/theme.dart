@@ -1,4 +1,4 @@
-part of '../app.dart';
+part of '../main.dart';
 
 final _primarySwatch = Colors.teal;
 

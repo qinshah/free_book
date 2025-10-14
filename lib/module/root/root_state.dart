@@ -1,0 +1,10 @@
+import 'package:flutter/widgets.dart';
+
+import '../../function/state_management.dart';
+
+class RootState extends ViewState {
+  final pageViewCntlr = PageController();
+  GlobalKey? pageKey = GlobalKey();
+
+  int pageIndex = 0;
+}
