@@ -3,4 +3,5 @@ import 'package:free_book/function/state_management.dart';
 
 class MyEditorState extends ViewState {
   EditorState? editorState;
+  late final EditorScrollController editorScrollController;
 }

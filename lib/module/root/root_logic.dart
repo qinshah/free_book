@@ -4,20 +4,20 @@ import '../../function/state_management.dart';
 import 'root_state.dart';
 
 class RootLogic extends ViewLogic<RootState> {
-  RootLogic(super.state);
+  RootLogic(super.curState);
 
   Future<void> changePage(int value) async {
-    state.pageViewCntlr.animateToPage(
+    curState.pageViewCntlr.animateToPage(
       value,
       duration: Durations.medium1,
       curve: Curves.ease,
     );
-    rebuild(state..pageIndex = value);
+    rebuild(curState..pageIndex = value);
   }
   
   
   @override
   void rememberDispose() {
-    state.pageViewKey = null;
+    curState.pageViewKey = null;
   }
 }

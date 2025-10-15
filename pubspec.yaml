@@ -13,6 +13,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   provider: ^6.1.5+1 # 状态管理
+  # file_picker_ohos: # 文件选择器.鸿蒙移植版
+  #   git:
+  #     url: https://gitcode.com/openharmony-sig/fluttertpc_file_picker.git
+  #     path: ohos
   file_selector: # 文件选择器.鸿蒙移植版
     git:
       url: https://gitcode.com/openharmony-tpc/flutter_packages.git

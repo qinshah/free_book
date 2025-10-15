@@ -16,7 +16,7 @@ class HomePageView extends StatelessWidget {
         return Builder(
           builder: (context) {
             final logic = context.watch<HomePageLogic>();
-            final state = logic.state;
+            final state = logic.curState;
             return ListView(
               padding: const EdgeInsets.all(16),
               children: [

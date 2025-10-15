@@ -43,7 +43,7 @@ class RootView extends StatelessWidget {
 
   SafeArea _buildHorizontal(BuildContext context) {
     final logic = context.watch<RootLogic>();
-    final pageIndex = logic.state.pageIndex;
+    final pageIndex = logic.curState.pageIndex;
     return SafeArea(
       left: false,
       right: false,
@@ -63,7 +63,7 @@ class RootView extends StatelessWidget {
                 );
               }).toList(),
             ),
-            Expanded(child: _buildPage(pageIndex, Axis.vertical, logic)),
+            Expanded(child: _buildPage(Axis.vertical, logic)),
           ],
         ),
       ),
@@ -72,13 +72,13 @@ class RootView extends StatelessWidget {
 
   Scaffold _buildVertical(BuildContext context) {
     final logic = context.watch<RootLogic>();
-    final pageIndex = logic.state.pageIndex;
+    final pageIndex = logic.curState.pageIndex;
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
-      body: _buildPage(pageIndex, Axis.horizontal, logic),
+      body: _buildPage(Axis.horizontal, logic),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: pageIndex,
         onTap: logic.changePage,
@@ -89,14 +89,14 @@ class RootView extends StatelessWidget {
     );
   }
 
-  Widget _buildPage(int index, Axis direction, logic) {
+  Widget _buildPage(Axis direction, RootLogic logic) {
     return PageView.builder(
+      key: logic.curState.pageViewKey,
+      controller: logic.curState.pageViewCntlr,
       scrollDirection: direction,
-      key: logic.state.pageViewKey,
-      controller: logic.state.pageViewCntlr,
       physics: NeverScrollableScrollPhysics(),
       itemCount: _pages.length,
-      itemBuilder: (BuildContext context, int index3) {
+      itemBuilder: (BuildContext context, int index) {
         return _pages.toList()[index].view;
       },
     );

@@ -6,109 +6,7 @@ enum HorizontalPosition { left, center, right }
 
 enum VerticalPosition { top, middle, bottom }
 
-class DragToReorderEditor extends StatefulWidget {
-  const DragToReorderEditor({
-    super.key,
-  });
-
-  @override
-  State<DragToReorderEditor> createState() => _DragToReorderEditorState();
-}
-
-class _DragToReorderEditorState extends State<DragToReorderEditor> {
-  late final EditorState editorState;
-  late final EditorStyle editorStyle;
-  late final Map<String, BlockComponentBuilder> blockComponentBuilders;
-
-  @override
-  void initState() {
-    super.initState();
-
-    forceShowBlockAction = true;
-    editorState = _createEditorState();
-    editorStyle = _createEditorStyle();
-    blockComponentBuilders = _createBlockComponentBuilders();
-  }
-
-  @override
-  void dispose() {
-    forceShowBlockAction = false;
-    editorState.dispose();
-
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Drag to reorder'),
-      ),
-      body: AppFlowyEditor(
-        editorState: editorState,
-        editorStyle: editorStyle,
-        blockComponentBuilders: blockComponentBuilders,
-        dropTargetStyle: const AppFlowyDropTargetStyle(
-          color: Colors.red,
-        ),
-      ),
-    );
-  }
-
-  Map<String, BlockComponentBuilder> _createBlockComponentBuilders() {
-    final builders = {...standardBlockComponentBuilderMap};
-    for (final entry in builders.entries) {
-      if (entry.key == PageBlockKeys.type) {
-        continue;
-      }
-
-      final builder = entry.value;
-
-      // only customize the todo list block
-      if (entry.key == TodoListBlockKeys.type) {
-        builder.showActions = (_) => true;
-        builder.actionBuilder = (context, actionState) {
-          return DragToReorderAction(
-            blockComponentContext: context,
-            builder: builder,
-          );
-        };
-      }
-    }
-    return builders;
-  }
-
-  EditorState _createEditorState() {
-    final document = Document.blank()
-      ..insert([
-        0,
-      ], [
-        todoListNode(checked: false, text: 'Todo 1'),
-        todoListNode(checked: false, text: 'Todo 2'),
-        todoListNode(checked: false, text: 'Todo 3'),
-      ]);
-    return EditorState(
-      document: document,
-    );
-  }
-
-  EditorStyle _createEditorStyle() {
-    return EditorStyle.desktop(
-      cursorWidth: 2.0,
-      cursorColor: Colors.black,
-      selectionColor: Colors.grey.shade300,
-      textStyleConfiguration: TextStyleConfiguration(
-        text: TextStyle(
-          fontSize: 16,
-          color: Colors.black,
-        ),
-        // code: TextStyle(), // TODO: code字体
-        bold: TextStyle(fontWeight: FontWeight.w500),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 200.0),
-    );
-  }
-}
+const _interceptorKey = 'drag_to_reorder_interceptor';
 
 class DragToReorderAction extends StatefulWidget {
   const DragToReorderAction({
@@ -123,8 +21,6 @@ class DragToReorderAction extends StatefulWidget {
   @override
   State<DragToReorderAction> createState() => _DragToReorderActionState();
 }
-
-const _interceptorKey = 'drag_to_reorder_interceptor';
 
 class _DragToReorderActionState extends State<DragToReorderAction> {
   late final Node node;
@@ -360,6 +256,109 @@ class _DragToReorderActionState extends State<DragToReorderAction> {
         color: Colors.transparent,
         child: child,
       ),
+    );
+  }
+}
+
+class DragToReorderEditor extends StatefulWidget {
+  const DragToReorderEditor({
+    super.key,
+  });
+
+  @override
+  State<DragToReorderEditor> createState() => _DragToReorderEditorState();
+}
+
+class _DragToReorderEditorState extends State<DragToReorderEditor> {
+  late final EditorState editorState;
+  late final EditorStyle editorStyle;
+  late final Map<String, BlockComponentBuilder> blockComponentBuilders;
+
+  @override
+  void initState() {
+    super.initState();
+
+    forceShowBlockAction = true;
+    editorState = _createEditorState();
+    editorStyle = _createEditorStyle();
+    blockComponentBuilders = _createBlockComponentBuilders();
+  }
+
+  @override
+  void dispose() {
+    forceShowBlockAction = false;
+    editorState.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Drag to reorder'),
+      ),
+      body: AppFlowyEditor(
+        editorState: editorState,
+        editorStyle: editorStyle,
+        blockComponentBuilders: blockComponentBuilders,
+        dropTargetStyle: const AppFlowyDropTargetStyle(
+          color: Colors.red,
+        ),
+      ),
+    );
+  }
+
+  Map<String, BlockComponentBuilder> _createBlockComponentBuilders() {
+    final builders = {...standardBlockComponentBuilderMap};
+    for (final entry in builders.entries) {
+      if (entry.key == PageBlockKeys.type) {
+        continue;
+      }
+
+      final builder = entry.value;
+
+      // only customize the todo list block
+      if (entry.key == TodoListBlockKeys.type) {
+        builder.showActions = (_) => true;
+        builder.actionBuilder = (context, actionState) {
+          return DragToReorderAction(
+            blockComponentContext: context,
+            builder: builder,
+          );
+        };
+      }
+    }
+    return builders;
+  }
+
+  EditorState _createEditorState() {
+    final document = Document.blank()
+      ..insert([
+        0,
+      ], [
+        todoListNode(checked: false, text: 'Todo 1'),
+        todoListNode(checked: false, text: 'Todo 2'),
+        todoListNode(checked: false, text: 'Todo 3'),
+      ]);
+    return EditorState(
+      document: document,
+    );
+  }
+
+  EditorStyle _createEditorStyle() {
+    return EditorStyle.desktop(
+      cursorWidth: 2.0,
+      cursorColor: Colors.black,
+      selectionColor: Colors.grey.shade300,
+      textStyleConfiguration: TextStyleConfiguration(
+        text: TextStyle(
+          fontSize: 16,
+          color: Colors.black,
+        ),
+        bold: TextStyle(fontWeight: FontWeight.w500),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 200.0),
     );
   }
 }

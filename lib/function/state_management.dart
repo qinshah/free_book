@@ -3,11 +3,11 @@ import 'package:flutter/foundation.dart';
 abstract class ViewState {}
 
 abstract class ViewLogic<T extends ViewState> extends ChangeNotifier {
-  T state;
-  ViewLogic(this.state);
+  T curState;
+  ViewLogic(this.curState);
 
   void rebuild(T newState) {
-    state = newState;
+    curState = newState;
     notifyListeners();
   }
 

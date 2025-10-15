@@ -20,12 +20,13 @@ class _EditPageViewState extends State<EditPageView>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
-  late final _logic = EditPageLogic(EditPageState());
+
+  final _logic = EditPageLogic(EditPageState());
 
   @override
   void initState() {
     super.initState();
-    _logic.loadDoc(widget.initDocPath);
+    _logic.setDoc(widget.initDocPath);
   }
 
   @override
@@ -34,12 +35,14 @@ class _EditPageViewState extends State<EditPageView>
     return ChangeNotifierProvider.value(
       value: _logic,
       builder: (context, _) {
-        return Scaffold(
-          appBar: AppBar(title: Text('编辑器')),
-          body: ChangeNotifierProvider.value(
-            value: _logic.state.editorLogic,
-            child: EditorView(),
-          ),
+        return Builder(
+          builder: (context) {
+          final state = context.watch<EditPageLogic>().curState;
+            return Scaffold(
+              appBar: AppBar(title: SelectableText(state.docName)),
+              body: EditorView(state.docPath),
+            );
+          },
         );
       },
     );
