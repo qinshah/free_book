@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../data_model/page.dart';
 import '../../function/state_management.dart';
 import '../edit/edit_page_view.dart';
+import '../home/home_page_view.dart';
 import '../settings/settings_page.dart';
 import 'root_logic.dart';
 import 'root_state.dart';
@@ -20,7 +21,7 @@ class _RootViewState extends State<RootView>
     AppPage(
       name: '首页',
       icon: Icon(Icons.home),
-      view: Center(child: Text('首页')),
+      view: Center(child: HomePageView()),
     ),
     AppPage(
       name: '快速新建',

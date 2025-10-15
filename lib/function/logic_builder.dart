@@ -10,12 +10,17 @@ class StateBuilder<StateT extends StateModel> extends StatelessWidget {
   final Logic<StateT> logic;
 
   final StateViewBuilder<StateT, Logic<StateT>> builder;
-
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<Logic<StateT>>(
-      create: (context) => logic,
-      child: builder(context, logic.state, logic),
+    return ChangeNotifierProvider<Logic<StateT>>.value(
+      value: logic,
+      child: Builder(
+        builder: (context) {
+          logic.context = context;
+          logic.initState();
+          return builder(context, logic.state, logic);
+        },
+      ),
     );
   }
 }
@@ -25,6 +30,8 @@ abstract class StateModel {
 }
 
 abstract class Logic<T extends StateModel> extends ChangeNotifier {
+  late final BuildContext context;
+
   T state;
   Logic(this.state);
 
@@ -32,4 +39,6 @@ abstract class Logic<T extends StateModel> extends ChangeNotifier {
     state = newState;
     notifyListeners();
   }
+
+  void initState() {}
 }

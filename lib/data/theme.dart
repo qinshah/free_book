@@ -4,6 +4,7 @@ final _primarySwatch = Colors.teal;
 
 ThemeData _getThemeData() {
   return ThemeData(
+    scaffoldBackgroundColor: Colors.grey.shade100,
     colorScheme: ColorScheme.fromSwatch(primarySwatch: _primarySwatch),
   );
 }
