@@ -12,16 +12,7 @@ class EditorLogic extends ViewLogic<MyEditorState> {
   EditorLogic(super.curState);
 
   Future<void> initEditor(String? docPath) async {
-    final EditorState editorState;
-    if (docPath == null) {
-      editorState = EditorState(document: Document.blank());
-    } else if (docPath.startsWith('assets')) {
-      final json = jsonDecode(await rootBundle.loadString(docPath));
-      editorState = EditorState(document: Document.fromJson(json));
-    } else {
-      final json = jsonDecode(await File(docPath).readAsString());
-      editorState = EditorState(document: Document.fromJson(json));
-    }
+    EditorState editorState = await _loadDoc(docPath);
     // 日志
     editorState.logConfiguration.level = AppFlowyEditorLogLevel.off;
     curState.editorScrollController = EditorScrollController(
@@ -29,6 +20,23 @@ class EditorLogic extends ViewLogic<MyEditorState> {
       shrinkWrap: false,
     );
     rebuild(curState..editorState = editorState);
+  }
+
+  Future<EditorState> _loadDoc(String? docPath) async {
+    if (docPath == null) return EditorState(document: Document.blank());
+    try {
+      if (docPath.startsWith('assets')) {
+        final json = jsonDecode(await rootBundle.loadString(docPath));
+        return EditorState(document: Document.fromJson(json));
+      } else {
+        final json = jsonDecode(await File(docPath).readAsString());
+        return EditorState(document: Document.fromJson(json));
+      }
+    } catch (e) {
+      // TODO 资源读取失败错误UI
+      debugPrint('资源读取失败：$docPath:\n$e');
+      return EditorState(document: Document.blank());
+    }
   }
 
   // 获取快捷键功能，上下文用于查找本地翻译

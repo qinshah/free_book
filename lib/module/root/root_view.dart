@@ -8,19 +8,24 @@ import '../home/home_page_view.dart';
 import '../settings/settings_page.dart';
 import 'root_logic.dart';
 
-class RootView extends StatelessWidget {
+class RootView extends StatefulWidget {
   const RootView({super.key});
 
-  final _pages = const {
+  @override
+  State<RootView> createState() => _RootViewState();
+}
+
+class _RootViewState extends State<RootView> {
+  final _pages = {
     AppPage(
       name: '首页',
       icon: Icon(Icons.home),
       view: Center(child: HomePageView()),
     ),
     AppPage(
-      name: '快速新建',
-      icon: Icon(Icons.create_outlined),
-      view: EditPageView.empty(),
+      name: '草稿',
+      icon: Icon(Icons.draw_outlined),
+      view: EditPageView.draft(),
     ),
     AppPage(name: '设置', icon: Icon(Icons.settings), view: SettingsPage()),
   };

@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:free_book/module/edit/edit_page_state.dart';
+import 'package:free_book/module/edit/editor/editor_logic.dart';
+import 'package:free_book/module/edit/editor/editor_state.dart';
 import 'package:provider/provider.dart';
 
 import 'edit_page_logic.dart';
 import 'editor/editor_view.dart';
 
 class EditPageView extends StatefulWidget {
-  const EditPageView(this.initDocPath, {super.key});
+  const EditPageView(this.initDocPath, {super.key}) : isDraft = false;
 
-  const EditPageView.empty({super.key}) : initDocPath = null;
+  const EditPageView.newDoc({super.key}) : initDocPath = null, isDraft = false;
+
+  const EditPageView.draft({super.key}) : initDocPath = null, isDraft = true;
 
   final String? initDocPath;
+
+  final bool isDraft;
 
   @override
   State<EditPageView> createState() => _EditPageViewState();
@@ -26,7 +32,7 @@ class _EditPageViewState extends State<EditPageView>
   @override
   void initState() {
     super.initState();
-    _logic.setDoc(widget.initDocPath);
+    _logic.setDoc(widget.initDocPath, widget.isDraft);
   }
 
   @override
@@ -37,14 +43,37 @@ class _EditPageViewState extends State<EditPageView>
       builder: (context, _) {
         return Builder(
           builder: (context) {
-          final state = context.watch<EditPageLogic>().curState;
+            final curState = context.watch<EditPageLogic>().curState;
             return Scaffold(
-              appBar: AppBar(title: SelectableText(state.docName)),
-              body: EditorView(state.docPath),
+              appBar: AppBar(
+                title: SelectableText(curState.docName),
+                // TODO 重构UI
+                actions: _buildToolBar(curState),
+              ),
+              body: ChangeNotifierProvider(
+                create: (_) {
+                  final editorLogic = EditorLogic(MyEditorState());
+                  curState.editorLogic = editorLogic;
+                  return editorLogic;
+                },
+                child: EditorView(curState.docPath),
+              ),
             );
           },
         );
       },
     );
+  }
+
+  List<Widget> _buildToolBar(EditPageState curState) {
+    return [
+      IconButton(
+        icon: Icon(Icons.save),
+        onPressed:
+            curState.docPath != null && !curState.docPath!.startsWith('assets')
+            ? () => _logic.saveDoc(curState.docPath!)
+            : null,
+      ),
+    ];
   }
 }

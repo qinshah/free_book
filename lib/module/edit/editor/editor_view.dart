@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:free_book/module/edit/editor/drag_to_reorder_editor.dart';
-import 'package:free_book/module/edit/editor/editor_state.dart';
 import 'package:provider/provider.dart';
 
 import 'editor_logic.dart';
@@ -22,10 +21,11 @@ class EditorView extends StatefulWidget {
 }
 
 class _EditorViewState extends State<EditorView> {
-  final _logic = EditorLogic(MyEditorState());
+  late final EditorLogic _logic;
   @override
   void initState() {
     super.initState();
+    _logic = context.read<EditorLogic>();
     _logic.initEditor(widget.docPath);
   }
 
@@ -37,57 +37,44 @@ class _EditorViewState extends State<EditorView> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: _logic,
-      child: Builder(
-        builder: (context) {
-          final curState = context.watch<EditorLogic>().curState;
-          final editorState = curState.editorState;
-          if (editorState == null) {
-            return Center(child: CircularProgressIndicator());
-          }
-          return FloatingToolbar(
-            items: [
-              paragraphItem,
-              ...headingItems,
-              ...markdownFormatItems,
-              quoteItem,
-              bulletedListItem,
-              numberedListItem,
-              linkItem,
-              buildTextColorItem(),
-              buildHighlightColorItem(),
-              ...textDirectionItems,
-              ...alignmentItems,
-            ],
-            tooltipBuilder: (context, _, message, child) {
-              return Tooltip(
-                message: message,
-                preferBelow: false,
-                child: child,
-              );
-            },
-            editorState: editorState,
-            textDirection: widget.textDirection,
-            editorScrollController: curState.editorScrollController,
-            child: Directionality(
-              textDirection: widget.textDirection,
-              child: AppFlowyEditor(
-                editorState: editorState,
-                editorScrollController: curState.editorScrollController,
-                blockComponentBuilders: _buildBlockComponentBuilders(),
-                commandShortcutEvents: _logic.getCommandShortcuts(context),
-                editorStyle: _buildEditorStyle(),
-                enableAutoComplete: true, // 自动完成，类似ai代码提示
-                autoCompleteTextProvider: _buildAutoCompleteTextProvider,
-                dropTargetStyle: const AppFlowyDropTargetStyle(
-                  color: Colors.red,
-                ),
-                footer: _buildFooter(editorState), // 页脚
-              ),
-            ),
-          );
-        },
+    final curState = context.watch<EditorLogic>().curState;
+    final editorState = curState.editorState;
+    if (editorState == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+    return FloatingToolbar(
+      items: [
+        paragraphItem,
+        ...headingItems,
+        ...markdownFormatItems,
+        quoteItem,
+        bulletedListItem,
+        numberedListItem,
+        linkItem,
+        buildTextColorItem(),
+        buildHighlightColorItem(),
+        ...textDirectionItems,
+        ...alignmentItems,
+      ],
+      tooltipBuilder: (context, _, message, child) {
+        return Tooltip(message: message, preferBelow: false, child: child);
+      },
+      editorState: editorState,
+      textDirection: widget.textDirection,
+      editorScrollController: curState.editorScrollController,
+      child: Directionality(
+        textDirection: widget.textDirection,
+        child: AppFlowyEditor(
+          editorState: editorState,
+          editorScrollController: curState.editorScrollController,
+          blockComponentBuilders: _buildBlockComponentBuilders(),
+          commandShortcutEvents: _logic.getCommandShortcuts(context),
+          editorStyle: _buildEditorStyle(),
+          enableAutoComplete: true, // 自动完成，类似ai代码提示
+          autoCompleteTextProvider: _buildAutoCompleteTextProvider,
+          dropTargetStyle: const AppFlowyDropTargetStyle(color: Colors.red),
+          footer: _buildFooter(editorState), // 页脚
+        ),
       ),
     );
   }

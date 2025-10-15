@@ -31,11 +31,11 @@ class HomePageView extends StatelessWidget {
                 SizedBox(height: 22),
                 Text('示例', style: TextStyle(fontSize: 20)),
                 SizedBox(height: 6),
-                _DocItem('assets/exampleJsonData.json', () {
+                _DocItem('assets/示例文档.json', () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return EditPageView('assets/exampleJsonData.json');
+                        return EditPageView('assets/示例文档.json');
                       },
                     ),
                   );

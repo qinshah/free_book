@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:free_book/function/storage.dart';
 import 'package:free_book/module/root/root_logic.dart';
 import 'package:free_book/module/root/root_state.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +11,9 @@ import 'module/root/root_view.dart';
 
 part 'data/theme.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Storage.i.init(); // 初始化存储功能
   runApp(const App());
 }
 

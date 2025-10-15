@@ -27,6 +27,10 @@ dependencies:
   #   git:
   #     url: https://gitcode.com/openharmony-sig/flutter_fluttertoast.git
   #     ref: br_fluttertoast_v8.2.11_ohos
+  path_provider: # 应用路径提供.鸿蒙移植版
+    git:
+      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+      path: "packages/path_provider/path_provider"
 
 dependency_overrides:
   url_launcher: # appflowy_editor用到.鸿蒙移植版
