@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:free_book/module/root/root_logic.dart';
+import 'package:free_book/module/root/root_state.dart';
+import 'package:provider/provider.dart';
 
 import 'module/root/root_view.dart';
 
@@ -17,7 +20,10 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: RootView(),
+      home: ChangeNotifierProvider(
+        create: (_) => RootLogic(RootState()),
+        child: RootView(),
+      ),
       theme: _getThemeData(),
       darkTheme: _getDarkThemeData(),
       localizationsDelegates: [

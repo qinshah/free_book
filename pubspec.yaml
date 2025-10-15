@@ -18,10 +18,11 @@ dependencies:
       url: https://gitcode.com/openharmony-tpc/flutter_packages.git
       path: packages/file_selector/file_selector
       ref: br_file_selector-v1.0.3_ohos
-  fluttertoast: # 系统级toast提示.鸿蒙移植版
-    git:
-      url: https://gitcode.com/openharmony-sig/flutter_fluttertoast.git
-      ref: br_fluttertoast_v8.2.11_ohos
+  fluttertoast: ^9.0.0
+  # fluttertoast: # 系统级toast提示.鸿蒙移植版
+  #   git:
+  #     url: https://gitcode.com/openharmony-sig/flutter_fluttertoast.git
+  #     ref: br_fluttertoast_v8.2.11_ohos
 
 dependency_overrides:
   url_launcher: # appflowy_editor用到.鸿蒙移植版
