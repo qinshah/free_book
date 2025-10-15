@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../../function/logic_builder.dart';
-import '../edit/edit_page_state.dart';
 import '../edit/edit_page_view.dart';
 import 'home_page_logic.dart';
 import 'home_page_state.dart';
@@ -11,35 +10,39 @@ class HomePageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StateBuilder(
-      logic: HomePageLogic(HomePageState()),
-      builder: (context, state, logic) {
-        return ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            SizedBox(height: 22),
-            Text('全部', style: TextStyle(fontSize: 20)),
-            SizedBox(height: 6),
-            _buildFiles(state.filePaths),
-            SizedBox(height: 22),
-            Text('最近', style: TextStyle(fontSize: 20)),
-            SizedBox(height: 6),
-            _buildFiles(state.recentFilePaths),
-            SizedBox(height: 22),
-            Text('示例', style: TextStyle(fontSize: 20)),
-            SizedBox(height: 6),
-            _DocItem('assets/exampleJsonData.json', () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => EditPageView(
-                    editPageState: EditPageState(
-                      assetPath: 'assets/exampleJsonData.json',
+    return ChangeNotifierProvider(
+      create: (context) => HomePageLogic(HomePageState()),
+      builder: (context, _) {
+        return Builder(
+          builder: (context) {
+            final logic = context.watch<HomePageLogic>();
+            final state = logic.state;
+            return ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                SizedBox(height: 22),
+                Text('全部', style: TextStyle(fontSize: 20)),
+                SizedBox(height: 6),
+                _buildFiles(state.filePaths),
+                SizedBox(height: 22),
+                Text('最近', style: TextStyle(fontSize: 20)),
+                SizedBox(height: 6),
+                _buildFiles(state.recentFilePaths),
+                SizedBox(height: 22),
+                Text('示例', style: TextStyle(fontSize: 20)),
+                SizedBox(height: 6),
+                _DocItem('assets/exampleJsonData.json', () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EditPageView('assets/exampleJsonData.json');
+                      },
                     ),
-                  ),
-                ),
-              );
-            }),
-          ],
+                  );
+                }),
+              ],
+            );
+          },
         );
       },
     );

@@ -1,37 +1,42 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// import 'package:flutter/foundation.dart';
+// import 'package:flutter/material.dart';
+// import 'package:provider/provider.dart';
 
-typedef F<S extends SfViewState, L extends SfViewLogic> = Widget Function(
-    S state, L logic);
+// typedef F<S extends SfViewState, L extends SfViewLogic> =
+//     Widget Function(S state, L logic);
 
-class SfView<S extends SfViewState, L extends SfViewLogic<S>>
-    extends StatelessWidget {
-  const SfView(this.f, {super.key});
+// class SfView<T extends ChangeNotifier> extends StatelessWidget {
+//   const SfView(this.f,{super.key});
 
-  final F<S, L> f;
+//   final Widget Function(S state, L logic) f;
 
-  @override
-  Widget build(BuildContext context) {
-    final logic = context.watch<L>();
-    return f(logic.state, logic);
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Placeholder();
+//   }
+// }
 
-abstract class SfViewState {}
+// class _SfViewState<S extends SfViewState, L extends SfViewLogic<S>>
+//     extends State<SfView<S, L>> {
+//   @override
+//   Widget build(BuildContext context) {}
+// }
 
-abstract class SfViewLogic<S extends SfViewState> extends ChangeNotifier {
-  S state;
+// abstract class SfViewState {
+//   late BuildContext context;
+//   SfViewState();
+// }
 
-  SfViewLogic(this.state);
+// abstract class SfViewLogic extends ChangeNotifier {
+//   void initState() {}
 
-  @nonVirtual
-  @override
-  void dispose() {
-    super.dispose();
-    rememberDispose();
-  }
+//   @nonVirtual
+//   @override
+//   void dispose() {
+//     super.dispose();
+//     rememberDispose();
+//   }
 
-  /// 在这里dispose，目的是为了提醒不要忘记dispose
-  void rememberDispose();
-}
+//   /// 在这里dispose，目的是为了提醒不要忘记dispose
+//   void rememberDispose();
+// }

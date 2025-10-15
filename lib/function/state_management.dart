@@ -3,6 +3,26 @@ import 'package:flutter/widgets.dart';
 
 abstract class ViewState {}
 
+abstract class ViewLogic<T extends ViewState> extends ChangeNotifier {
+  T state;
+  ViewLogic(this.state);
+
+  void rebuild(T newState) {
+    state = newState;
+    notifyListeners();
+  }
+
+  /// 在rememberDispose中实现
+  @nonVirtual
+  @override
+  void dispose() {
+    super.dispose();
+    rememberDispose();
+  }
+
+  void rememberDispose();
+}
+
 abstract class Logic1<T extends ViewState> {
   static final _values = <String, Logic1>{};
 
