@@ -1,4 +1,8 @@
+import 'dart:io';
+
+import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:flutter/material.dart';
+import 'package:free_book/function/storage.dart';
 import 'package:free_book/module/edit/edit_page_state.dart';
 import 'package:free_book/module/edit/editor/editor_logic.dart';
 import 'package:free_book/module/edit/editor/editor_state.dart';
@@ -41,39 +45,187 @@ class _EditPageViewState extends State<EditPageView>
     return ChangeNotifierProvider.value(
       value: _logic,
       builder: (context, _) {
-        return Builder(
-          builder: (context) {
-            final curState = context.watch<EditPageLogic>().curState;
-            return Scaffold(
-              appBar: AppBar(
-                title: SelectableText(curState.docName),
-                // TODO 重构UI
-                actions: _buildToolBar(curState),
-              ),
-              body: ChangeNotifierProvider(
-                create: (_) {
-                  final editorLogic = EditorLogic(MyEditorState());
-                  curState.editorLogic = editorLogic;
-                  return editorLogic;
-                },
-                child: EditorView(curState.docPath),
-              ),
-            );
-          },
+        return ChangeNotifierProvider(
+          create: (_) => EditorLogic(MyEditorState()),
+          child: Builder(
+            builder: (context) {
+              final curState = context.watch<EditPageLogic>().curState;
+              return Scaffold(
+                appBar: AppBar(
+                  title: SelectableText(curState.docName),
+                  // TODO 重构UI
+                  actions: [_ToolBar()],
+                ),
+                body: EditorView(curState.docPath),
+              );
+            },
+          ),
         );
       },
     );
   }
+}
 
-  List<Widget> _buildToolBar(EditPageState curState) {
-    return [
-      IconButton(
-        icon: Icon(Icons.save),
-        onPressed:
-            curState.docPath != null && !curState.docPath!.startsWith('assets')
-            ? () => _logic.saveDoc(curState.docPath!)
-            : null,
+class _ToolBar extends StatelessWidget {
+  const _ToolBar();
+  @override
+  Widget build(BuildContext context) {
+    final logic = context.watch<EditPageLogic>();
+    final curState = logic.curState;
+    final doc = context.watch<EditorLogic>().curState.editorState?.document;
+    final path = curState.docPath;
+    return Row(
+      children: [
+        IconButton(
+          icon: Icon(Icons.save_rounded),
+          onPressed: path == null || path.startsWith('assets') || doc == null
+              ? null
+              : () async {
+                  try {
+                    await logic.saveDoc(path, doc);
+                    // TOTO 成功的UI提示
+                  } catch (e) {
+                    // TODO 失败的UI提示
+                  }
+                },
+        ),
+        IconButton(
+          icon: Icon(Icons.save_as),
+          onPressed: doc == null
+              ? null
+              : () => showAdaptiveDialog(
+                  context: context,
+                  builder: (_) {
+                    return ChangeNotifierProvider.value(
+                      value: logic,
+                      child: _SaveAsDialog(doc),
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SaveAsDialog extends StatefulWidget {
+  final Document doc;
+  const _SaveAsDialog(this.doc);
+
+  @override
+  State<_SaveAsDialog> createState() => _SaveAsDialogState();
+}
+
+class _SaveAsDialogState extends State<_SaveAsDialog> {
+  late final _logic = context.read<EditPageLogic>();
+  String? _error = '';
+  late File _targetFile;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkNameError(_logic.curState.saveAsNameCntlr.text).then((error) {
+      setState(() => _error = error);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog.adaptive(
+      title: Text('另存为'),
+      content: TextField(
+        autofocus: true,
+        controller: _logic.curState.saveAsNameCntlr,
+        onChanged: (value) async {
+          final error = await _checkNameError(value);
+          setState(() => _error = error);
+        },
+        onSubmitted: _error == null ? (_) => _saveAs() : null,
+        decoration: InputDecoration(
+          hintText: '输入新名称',
+          errorText: _error == null || _error!.isEmpty ? null : _error,
+        ),
       ),
-    ];
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text('取消'),
+        ),
+        TextButton(
+          onPressed: _error == null ? _saveAs : null,
+          child: Text('确定'),
+        ),
+      ],
+    );
+  }
+
+  void _saveAs() async {
+    try {
+      await _targetFile.create();
+      await _logic.saveDoc(_targetFile.path, widget.doc);
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      // TODO 将另存的文档添加到全部文档
+      showAdaptiveDialog(context: context, builder: _buildOpenNewPageDialog);
+    } catch (e) {
+      setState(() => _error = '保存失败：$e');
+    }
+  }
+
+  Future<String?> _checkNameError(String value) async {
+    if (value.isEmpty) {
+      return '';
+    } else if (value.startsWith(' ')) {
+      return '不能以空格开头';
+    }
+    final file = File('${Storage.i.docStartPath}$value.json');
+    try {
+      if (await file.exists()) {
+        return '已存在同名文件';
+      }
+      _targetFile = file;
+      return null;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Widget _buildOpenNewPageDialog(BuildContext context) {
+    final theme = Theme.of(context);
+    return AlertDialog.adaptive(
+      title: Text('已另存，是否打开？'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('文件已另存到'),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Text(
+              _targetFile.path,
+              style: TextStyle(color: theme.primaryColor),
+            ),
+          ),
+          SizedBox(height: 20),
+          Text('继续编辑当前文档还是打开刚刚另存的文档？'),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: Navigator.of(context).pop,
+          child: Text('不打开', style: theme.textTheme.bodyMedium),
+        ),
+        TextButton(
+          child: Text('打开'),
+          onPressed: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => EditPageView(_targetFile.path),
+              ),
+            );
+          },
+        ),
+      ],
+    );
   }
 }

@@ -29,6 +29,7 @@ class App extends StatelessWidget {
       ),
       theme: _getThemeData(),
       darkTheme: _getDarkThemeData(),
+      debugShowCheckedModeBanner: false,
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,

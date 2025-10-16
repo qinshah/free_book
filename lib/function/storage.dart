@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -7,6 +9,8 @@ class Storage {
   static final i = Storage._();
 
   late final String docDirPath;
+  late final String docStartPath =
+      '${Storage.i.docDirPath}${Platform.pathSeparator}';
 
   Future<void> init() async {
     try {
