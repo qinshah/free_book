@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:free_book/function/screen.dart';
 import 'package:provider/provider.dart';
 
@@ -9,7 +10,9 @@ import '../settings/settings_page.dart';
 import 'root_logic.dart';
 
 class RootView extends StatelessWidget {
-  const RootView({super.key});
+  const RootView({super.key, required this.finalLogic});
+
+  final RootLogic finalLogic;
 
   final _pages = const {
     AppPage(
@@ -42,8 +45,7 @@ class RootView extends StatelessWidget {
   }
 
   SafeArea _buildHorizontal(BuildContext context) {
-    final logic = context.watch<RootLogic>();
-    final pageIndex = logic.curState.pageIndex;
+    var curPageIndex = context.watch<RootLogic>().curState.pageIndex;
     return SafeArea(
       left: false,
       right: false,
@@ -53,9 +55,9 @@ class RootView extends StatelessWidget {
         child: Row(
           children: [
             NavigationRail(
-              selectedIndex: pageIndex,
+              selectedIndex: curPageIndex,
               labelType: NavigationRailLabelType.all,
-              onDestinationSelected: logic.changePage,
+              onDestinationSelected: finalLogic.changePage,
               destinations: _pages.map((item) {
                 return NavigationRailDestination(
                   icon: item.icon,
@@ -63,36 +65,54 @@ class RootView extends StatelessWidget {
                 );
               }).toList(),
             ),
-            Expanded(child: _buildPage(Axis.vertical, logic)),
+            Expanded(child: _buildPage(Axis.vertical)),
           ],
         ),
       ),
     );
   }
 
-  Scaffold _buildVertical(BuildContext context) {
-    final logic = context.watch<RootLogic>();
-    final pageIndex = logic.curState.pageIndex;
+  Widget _buildVertical(BuildContext context) {
+    final theme = Theme.of(context);
+    var curPageIndex = context.watch<RootLogic>().curState.pageIndex;
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
-      body: _buildPage(Axis.horizontal, logic),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: pageIndex,
-        onTap: logic.changePage,
-        items: _pages.map((page) {
-          return BottomNavigationBarItem(icon: page.icon, label: page.name);
-        }).toList(),
+      extendBody: true,
+      body: BottomBar(
+        body: (context, scrollCntlr) {
+          finalLogic.curState.scrollCntlr = scrollCntlr;
+          return _buildPage(Axis.horizontal);
+        },
+        // fit: StackFit.expand,
+        // 回到顶部按钮
+        icon: (_, _) => Icon(Icons.arrow_upward_rounded),
+        duration: Durations.medium1,
+        barColor: Colors.transparent,
+        start: 2,
+        end: 0,
+        offset: 10,
+        barAlignment: Alignment.bottomCenter,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: BottomNavigationBar(
+            currentIndex: curPageIndex,
+            onTap: finalLogic.changePage,
+            items: _pages.map((page) {
+              return BottomNavigationBarItem(icon: page.icon, label: page.name);
+            }).toList(),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildPage(Axis direction, RootLogic logic) {
+  Widget _buildPage(Axis direction) {
     return PageView.builder(
-      key: logic.curState.pageViewKey,
-      controller: logic.curState.pageViewCntlr,
+      key: finalLogic.curState.pageViewKey,
+      controller: finalLogic.curState.pageViewCntlr,
       scrollDirection: direction,
       physics: NeverScrollableScrollPhysics(),
       itemCount: _pages.length,

@@ -17,7 +17,6 @@ class EditorLogic extends ViewLogic<MyEditorState> {
     editorState.logConfiguration.level = AppFlowyEditorLogLevel.off;
     curState.editorScrollController = EditorScrollController(
       editorState: editorState,
-      shrinkWrap: false,
     );
     rebuildState(curState..editorState = editorState);
   }

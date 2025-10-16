@@ -134,7 +134,7 @@ class _SaveAsDialogState extends State<_SaveAsDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog.adaptive(
+    return AlertDialog(
       title: Text('另存为'),
       content: TextField(
         autofocus: true,
@@ -193,7 +193,7 @@ class _SaveAsDialogState extends State<_SaveAsDialog> {
 
   Widget _buildOpenNewPageDialog(BuildContext context) {
     final theme = Theme.of(context);
-    return AlertDialog.adaptive(
+    return AlertDialog(
       title: Text('已另存，是否打开？'),
       content: Column(
         mainAxisSize: MainAxisSize.min,

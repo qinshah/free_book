@@ -1,23 +1,28 @@
 part of '../main.dart';
 
-final _primarySwatch = Colors.teal;
+final _primaryMColor = Colors.teal;
 
 ThemeData _getThemeData() {
   return ThemeData(
-    primaryColor: _primarySwatch,
-    primarySwatch: _primarySwatch,
+    primaryColor: _primaryMColor,
+    primarySwatch: _primaryMColor,
     scaffoldBackgroundColor: Colors.grey.shade100,
-    colorScheme: ColorScheme.fromSwatch(primarySwatch: _primarySwatch),
+    colorScheme: ColorScheme.fromSwatch(primarySwatch: _primaryMColor),
+    // bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    // ),
   );
 }
 
 ThemeData _getDarkThemeData() {
   return ThemeData(
-    primaryColor: _primarySwatch,
-    primarySwatch: _primarySwatch,
+    primaryColor: _primaryMColor,
+    primarySwatch: _primaryMColor,
     colorScheme: ColorScheme.fromSwatch(
-      primarySwatch: _primarySwatch,
+      primarySwatch: _primaryMColor,
       brightness: Brightness.dark,
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: Colors.grey.shade700,
     ),
   );
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:free_book/module/root/root_logic.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -15,6 +17,8 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      key: PageStorageKey('SettingsPageStorageKey'),
+      controller: context.read<RootLogic>().curState.scrollCntlr,
       children: [
         ListTile(title: Text('外观')),
         Card(

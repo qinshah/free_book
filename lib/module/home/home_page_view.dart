@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:free_book/function/storage.dart';
+import 'package:free_book/module/root/root_logic.dart';
 import 'package:provider/provider.dart';
 
 import '../edit/edit_page_view.dart';
@@ -31,6 +32,8 @@ class _HomePageViewState extends State<HomePageView> {
       builder: (context) {
         final curState = context.watch<HomePageLogic>().curState;
         return ListView(
+          key: PageStorageKey('HomePageStorageKey'),
+          controller: context.read<RootLogic>().curState.scrollCntlr,
           padding: const EdgeInsets.all(16),
           children: [
             SizedBox(height: 22),

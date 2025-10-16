@@ -17,23 +17,24 @@ part 'data/theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Storage.i.init(); // 初始化存储功能
-  
+
   // 初始化app主题模式
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
-  
+
   runApp(App(savedThemeMode: savedThemeMode));
 }
 
 class App extends StatelessWidget {
   final AdaptiveThemeMode? savedThemeMode;
-  
+
   const App({super.key, this.savedThemeMode});
 
   @override
   Widget build(BuildContext context) {
+    final rootLogic = RootLogic(RootState());
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => RootLogic(RootState())),
+        ChangeNotifierProvider.value(value: rootLogic),
         ChangeNotifierProvider(create: (_) => HomePageLogic(HomePageState())),
       ],
       child: AdaptiveTheme(
@@ -41,10 +42,9 @@ class App extends StatelessWidget {
         dark: _getDarkThemeData(),
         initial: savedThemeMode ?? AdaptiveThemeMode.system,
         builder: (theme, darkTheme) => MaterialApp(
-          home: RootView(),
+          home: RootView(finalLogic: rootLogic),
           theme: theme,
           darkTheme: darkTheme,
-          debugShowCheckedModeBanner: false,
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
@@ -52,7 +52,8 @@ class App extends StatelessWidget {
             AppFlowyEditorLocalizations.delegate,
           ],
           // AppFlowy supportedLocales含中文
-          supportedLocales: AppFlowyEditorLocalizations.delegate.supportedLocales,
+          supportedLocales:
+              AppFlowyEditorLocalizations.delegate.supportedLocales,
         ),
       ),
     );

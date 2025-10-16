@@ -26,7 +26,9 @@ class _EditorViewState extends State<EditorView> {
   void initState() {
     super.initState();
     _logic = context.read<EditorLogic>();
-    _logic.loadDoc(widget.docPath);
+    _logic.loadDoc(
+      widget.docPath
+    );
   }
 
   @override

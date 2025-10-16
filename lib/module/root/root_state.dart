@@ -7,4 +7,6 @@ class RootState extends ViewState {
   GlobalKey? pageViewKey = GlobalKey();
 
   int pageIndex = 0;
+
+  late  ScrollController scrollCntlr;
 }
