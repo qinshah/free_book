@@ -1,59 +1,90 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:free_book/function/storage.dart';
 import 'package:provider/provider.dart';
 
 import '../edit/edit_page_view.dart';
 import 'home_page_logic.dart';
-import 'home_page_state.dart';
 
-class HomePageView extends StatelessWidget {
+class HomePageView extends StatefulWidget {
   const HomePageView({super.key});
 
   @override
+  State<HomePageView> createState() => _HomePageViewState();
+}
+
+class _HomePageViewState extends State<HomePageView> {
+  late final _logic = context.read<HomePageLogic>();
+
+  @override
+  void initState() {
+    super.initState();
+    _logic.loadDocList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => HomePageLogic(HomePageState()),
-      builder: (context, _) {
-        return Builder(
-          builder: (context) {
-            final logic = context.watch<HomePageLogic>();
-            final state = logic.curState;
-            return ListView(
-              padding: const EdgeInsets.all(16),
+    // TODO 下拉刷新
+    return Builder(
+      builder: (context) {
+        final curState = context.watch<HomePageLogic>().curState;
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            SizedBox(height: 22),
+            Text('示例', style: TextStyle(fontSize: 20)),
+            SizedBox(height: 6),
+            _DocItem('assets/示例文档.json'),
+            SizedBox(height: 22),
+            Row(
               children: [
-                SizedBox(height: 22),
                 Text('全部', style: TextStyle(fontSize: 20)),
-                SizedBox(height: 6),
-                _buildFiles(state.filePaths),
-                SizedBox(height: 22),
-                Text('最近', style: TextStyle(fontSize: 20)),
-                SizedBox(height: 6),
-                _buildFiles(state.recentFilePaths),
-                SizedBox(height: 22),
-                Text('示例', style: TextStyle(fontSize: 20)),
-                SizedBox(height: 6),
-                _DocItem('assets/示例文档.json', () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return EditPageView('assets/示例文档.json');
-                      },
-                    ),
-                  );
-                }),
+                Spacer(),
+                if (kDebugMode)
+                  TextButton(
+                    onPressed: () async {
+                      await for (final entity in Directory(
+                        Storage.i.docDirPath,
+                      ).list()) {
+                        if (entity is File &&
+                            entity.path.endsWith('.json') &&
+                            !entity.path.endsWith('草稿.json')) {
+                          entity.delete();
+                        }
+                      }
+                      _logic.loadDocList();
+                    },
+                    child: Text('全部删除'),
+                  ),
               ],
-            );
-          },
+            ),
+            SizedBox(height: 6),
+            _buildDocList(curState.docPaths),
+            SizedBox(height: 22),
+            Row(
+              children: [
+                Text('最近', style: TextStyle(fontSize: 20)),
+                Spacer(),
+                if (curState.recentDocPaths.isNotEmpty)
+                  TextButton(onPressed: _logic.clearRec, child: Text('清空记录')),
+              ],
+            ),
+            SizedBox(height: 6),
+            _buildDocList(curState.recentDocPaths),
+          ],
         );
       },
     );
   }
 
-  Widget _buildFiles(List<String> filePaths) {
+  Widget _buildDocList(List<String> filePaths) {
     if (filePaths.isEmpty) {
       return Card(
         child: SizedBox(
           height: 100,
-          child: Center(child: Text('空', style: TextStyle(fontSize: 20))),
+          child: Center(child: Text('什么也没有', style: TextStyle(fontSize: 20))),
         ),
       );
     }
@@ -73,15 +104,17 @@ class HomePageView extends StatelessWidget {
 }
 
 class _DocItem extends StatelessWidget {
-  const _DocItem(this.filePath, [this.onTap]);
+  const _DocItem(this.docPath);
 
-  final String filePath;
-  final VoidCallback? onTap;
+  final String docPath;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final fileName = filePath.split('/').last.split('.').first;
+    final fileName = docPath.split('/').last.split('.').first;
+    final lastModified = docPath.startsWith('assets')
+        ? null
+        : File(docPath).lastModifiedSync();
     return Ink(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
@@ -96,18 +129,24 @@ class _DocItem extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(10),
-        onTap: onTap ?? () {},
+        onTap: () async {
+          await Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => EditPageView(docPath)),
+          );
+          if (context.mounted) {
+            // 刷新列表
+            context.read<HomePageLogic>().loadDocList();
+          }
+        },
         child: ListTile(
           title: Text(
             fileName,
             style: TextStyle(fontSize: 16),
             overflow: TextOverflow.ellipsis,
           ),
-          subtitle: Text(
-            filePath,
-            style: TextStyle(fontSize: 12),
-            overflow: TextOverflow.ellipsis,
-          ),
+          trailing: lastModified == null
+              ? Icon(Icons.open_in_new_rounded)
+              : Text(lastModified.toString().substring(0, 16)),
         ),
       ),
     );

@@ -464,7 +464,7 @@ packages:
     source: hosted
     version: "1.1.0"
   path_provider:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       path: "packages/path_provider/path_provider"
       ref: HEAD
@@ -586,7 +586,7 @@ packages:
     source: hosted
     version: "3.0.1"
   shared_preferences:
-    dependency: "direct overridden"
+    dependency: "direct main"
     description:
       path: "packages/shared_preferences/shared_preferences"
       ref: "br_shared_preferences-v2.5.3_ohos"

@@ -11,7 +11,7 @@ import 'editor_state.dart';
 class EditorLogic extends ViewLogic<MyEditorState> {
   EditorLogic(super.curState);
 
-  Future<void> initEditor(String? docPath) async {
+  Future<void> loadDoc(String? docPath) async {
     EditorState editorState = await _loadDoc(docPath);
     // 日志
     editorState.logConfiguration.level = AppFlowyEditorLogLevel.off;
@@ -19,7 +19,7 @@ class EditorLogic extends ViewLogic<MyEditorState> {
       editorState: editorState,
       shrinkWrap: false,
     );
-    rebuild(curState..editorState = editorState);
+    rebuildState(curState..editorState = editorState);
   }
 
   Future<EditorState> _loadDoc(String? docPath) async {

@@ -2,8 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
+import 'package:flutter/material.dart';
 import 'package:free_book/function/state_management.dart';
 import 'package:free_book/function/storage.dart';
+import 'package:free_book/module/home/home_page_logic.dart';
+import 'package:provider/provider.dart';
 
 import 'edit_page_state.dart';
 
@@ -15,16 +18,16 @@ class EditPageLogic extends ViewLogic<EditPageState> {
     curState.saveAsNameCntlr.dispose();
   }
 
-  void setDoc(String? docPath, [bool isDraft = false]) {
+  void loadDocInfo(String? docPath, bool isDraft) {
     if (isDraft) {
       _setDraftDoc();
       return;
     }
     final name = docPath?.split('/').last.split('.').first;
     if (name == null || name.isEmpty) {
-      rebuild(curState..docPath = docPath);
+      rebuildState(curState..docPath = docPath);
     } else {
-      rebuild(
+      rebuildState(
         curState
           ..docPath = docPath
           ..docName = name,
@@ -39,7 +42,7 @@ class EditPageLogic extends ViewLogic<EditPageState> {
       final emptyDocString = jsonEncode(Document.blank().toJson());
       File(draftPath).writeAsStringSync(emptyDocString);
     }
-    rebuild(
+    rebuildState(
       curState
         ..docPath = draftPath
         ..docName = '草稿',
@@ -50,11 +53,10 @@ class EditPageLogic extends ViewLogic<EditPageState> {
     await File(path).writeAsString(jsonEncode(doc.toJson()));
   }
 
-  void _reSetDoc(String path) {
-    rebuild(
-      curState
-        ..docPath = path
-        ..docName = path.split('/').last.split('.').first,
-    );
+  void addToRecDoc(String? path, bool isDraft, BuildContext context) {
+    // 草稿、示例和新建都不添加
+    if (isDraft || path == null || path.startsWith('assets')) return;
+    final homePageLogic = context.read<HomePageLogic>();
+    homePageLogic.addDocToRecent(path);
   }
 }

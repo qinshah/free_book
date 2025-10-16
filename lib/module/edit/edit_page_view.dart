@@ -36,7 +36,9 @@ class _EditPageViewState extends State<EditPageView>
   @override
   void initState() {
     super.initState();
-    _logic.setDoc(widget.initDocPath, widget.isDraft);
+    // 添加到最近文档列表
+    _logic.addToRecDoc(widget.initDocPath, widget.isDraft, context);
+    _logic.loadDocInfo(widget.initDocPath, widget.isDraft);
   }
 
   @override
@@ -161,11 +163,9 @@ class _SaveAsDialogState extends State<_SaveAsDialog> {
 
   void _saveAs() async {
     try {
-      await _targetFile.create();
-      await _logic.saveDoc(_targetFile.path, widget.doc);
+      await _logic.saveDoc((await _targetFile.create()).path, widget.doc);
       if (!mounted) return;
       Navigator.of(context).pop();
-      // TODO 将另存的文档添加到全部文档
       showAdaptiveDialog(context: context, builder: _buildOpenNewPageDialog);
     } catch (e) {
       setState(() => _error = '保存失败：$e');

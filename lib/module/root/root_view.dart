@@ -8,15 +8,10 @@ import '../home/home_page_view.dart';
 import '../settings/settings_page.dart';
 import 'root_logic.dart';
 
-class RootView extends StatefulWidget {
+class RootView extends StatelessWidget {
   const RootView({super.key});
 
-  @override
-  State<RootView> createState() => _RootViewState();
-}
-
-class _RootViewState extends State<RootView> {
-  final _pages = {
+  final _pages = const {
     AppPage(
       name: '首页',
       icon: Icon(Icons.home),

@@ -6,7 +6,7 @@ abstract class ViewLogic<T extends ViewState> extends ChangeNotifier {
   T curState;
   ViewLogic(this.curState);
 
-  void rebuild(T newState) {
+  void rebuildState(T newState) {
     curState = newState;
     notifyListeners();
   }

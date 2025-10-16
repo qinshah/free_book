@@ -12,7 +12,7 @@ class RootLogic extends ViewLogic<RootState> {
       duration: Durations.medium1,
       curve: Curves.ease,
     );
-    rebuild(curState..pageIndex = value);
+    rebuildState(curState..pageIndex = value);
   }
   
   
