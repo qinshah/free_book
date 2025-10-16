@@ -73,7 +73,7 @@ class RootView extends StatelessWidget {
   }
 
   Widget _buildVertical(BuildContext context) {
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
     var curPageIndex = context.watch<RootLogic>().curState.pageIndex;
     return Scaffold(
       appBar: AppBar(

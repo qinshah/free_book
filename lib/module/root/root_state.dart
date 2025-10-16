@@ -8,5 +8,5 @@ class RootState extends ViewState {
 
   int pageIndex = 0;
 
-  late  ScrollController scrollCntlr;
+  ScrollController scrollCntlr = ScrollController();
 }
