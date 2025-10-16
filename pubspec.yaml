@@ -8,6 +8,7 @@ environment:
 
 dependencies:
   appflowy_editor: ^6.1.0 # 编辑器
+  adaptive_theme: ^3.7.2 # 主题切换
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -18,11 +19,6 @@ dependencies:
     git:
       url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
       path: "packages/path_provider/path_provider"
-  shared_preferences: # 缓存.鸿蒙移植版
-    git:
-      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
-      path: "packages/shared_preferences/shared_preferences"
-      ref: "br_shared_preferences-v2.5.3_ohos"
 
 dependency_overrides:
   # fluttertoast: # 系统级toast提示.鸿蒙移植版
@@ -43,6 +39,11 @@ dependency_overrides:
       url: https://gitcode.com/openharmony-tpc/flutter_packages.git
       path: packages/url_launcher/url_launcher
       ref: br_url_launcher_v6.3.1_ohos
+  shared_preferences: # 缓存.鸿蒙移植版
+    git:
+      url: "https://gitcode.com/openharmony-tpc/flutter_packages.git"
+      path: "packages/shared_preferences/shared_preferences"
+      ref: "br_shared_preferences-v2.5.3_ohos"
 
 dev_dependencies:
   flutter_test:
