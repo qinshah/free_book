@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:free_book/function/storage.dart';
 import 'package:free_book/module/home/home_page_logic.dart';
 import 'package:free_book/module/home/home_page_state.dart';
@@ -16,10 +17,22 @@ part 'data/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Storage.i.init(); // 初始化存储功能
+  try {
+    await Storage.i.init();
+  } catch (e) {
+    // context.showToast('应用存储功能加载失败: $e', ToastType.error);
+    // TODO: 想办法在UI上提示
+    debugPrint('应用存储功能加载失败: $e');
+  }
+  // 初始化存储功能
 
-  // 初始化app主题模式
-  final savedThemeMode = await AdaptiveTheme.getThemeMode();
+  late final AdaptiveThemeMode? savedThemeMode;
+  try {
+    savedThemeMode = await AdaptiveTheme.getThemeMode();
+  } catch (e) {
+    debugPrint('保存的app主题获取失败: $e');
+    savedThemeMode = AdaptiveThemeMode.system;
+  }
 
   runApp(App(savedThemeMode: savedThemeMode));
 }
@@ -36,7 +49,7 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-      return MultiProvider(
+    return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => RootLogic(RootState())),
         ChangeNotifierProvider(create: (_) => HomePageLogic(HomePageState())),
@@ -47,6 +60,7 @@ class _AppState extends State<App> {
         initial: widget.savedThemeMode ?? AdaptiveThemeMode.system,
         builder: (theme, darkTheme) => MaterialApp(
           home: RootView(),
+          builder: FToastBuilder(),
           theme: theme,
           darkTheme: darkTheme,
           localizationsDelegates: [

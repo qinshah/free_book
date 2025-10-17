@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:free_book/function/context_extension.dart';
 import 'package:free_book/function/state_management.dart';
 
 import 'editor_state.dart';
@@ -11,8 +12,8 @@ import 'editor_state.dart';
 class EditorLogic extends ViewLogic<MyEditorState> {
   EditorLogic(super.curState);
 
-  Future<void> loadDoc(String? docPath) async {
-    EditorState editorState = await _loadDoc(docPath);
+  Future<void> loadDoc(String? docPath, BuildContext context) async {
+    EditorState editorState = await _loadEditor(docPath, context);
     // 日志
     editorState.logConfiguration.level = AppFlowyEditorLogLevel.off;
     curState.editorScrollController = EditorScrollController(
@@ -21,7 +22,7 @@ class EditorLogic extends ViewLogic<MyEditorState> {
     rebuildState(curState..editorState = editorState);
   }
 
-  Future<EditorState> _loadDoc(String? docPath) async {
+  Future<EditorState> _loadEditor(String? docPath, BuildContext context) async {
     if (docPath == null) return EditorState(document: Document.blank());
     try {
       if (docPath.startsWith('assets')) {
@@ -32,8 +33,7 @@ class EditorLogic extends ViewLogic<MyEditorState> {
         return EditorState(document: Document.fromJson(json));
       }
     } catch (e) {
-      // TODO 资源读取失败错误UI
-      debugPrint('资源读取失败：$docPath:\n$e');
+      context.showToast('文档打开失败，路径\n：$docPath:\n$e', ToastType.warn);
       return EditorState(document: Document.blank());
     }
   }

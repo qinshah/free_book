@@ -26,7 +26,7 @@ class _EditorViewState extends State<EditorView> {
   void initState() {
     super.initState();
     _logic = context.read<EditorLogic>();
-    _logic.loadDoc(widget.docPath);
+    _logic.loadDoc(widget.docPath, context);
   }
 
   @override
@@ -37,45 +37,90 @@ class _EditorViewState extends State<EditorView> {
 
   @override
   Widget build(BuildContext context) {
-   final theme = Theme.of(context);
+    final theme = Theme.of(context);
     final curState = context.watch<EditorLogic>().curState;
     final editorState = curState.editorState;
     if (editorState == null) {
       return Center(child: CircularProgressIndicator());
     }
-    return FloatingToolbar(
-      items: [
-        paragraphItem,
-        ...headingItems,
-        ...markdownFormatItems,
-        quoteItem,
-        bulletedListItem,
-        numberedListItem,
-        linkItem,
-        buildTextColorItem(),
-        buildHighlightColorItem(),
-        ...textDirectionItems,
-        ...alignmentItems,
-      ],
-      tooltipBuilder: (context, _, message, child) {
-        return Tooltip(message: message, preferBelow: false, child: child);
-      },
-      editorState: editorState,
-      textDirection: widget.textDirection,
-      editorScrollController: curState.editorScrollController,
-      child: Directionality(
-        textDirection: widget.textDirection,
-        child: Card(
-          child: AppFlowyEditor(
-            editorState: editorState,
-            editorScrollController: curState.editorScrollController,
-            blockComponentBuilders: _buildBlockComponentBuilders(),
-            commandShortcutEvents: _logic.getCommandShortcuts(context),
-            editorStyle: _buildEditorStyle(),
-            enableAutoComplete: true, // 自动完成，类似ai代码提示
-            autoCompleteTextProvider: _buildAutoCompleteTextProvider,
-            dropTargetStyle: const AppFlowyDropTargetStyle(color: Colors.red),
-            footer: _buildFooter(editorState), // 页脚
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: ColoredBox(
+          color: theme.cardColor,
+          child: CustomScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                // 工具条
+                child: MobileToolbar(
+                  editorState: editorState,
+                  toolbarHeight: 38,
+                  backgroundColor:
+                      theme.bottomNavigationBarTheme.backgroundColor!,
+                  foregroundColor: theme.textTheme.bodyMedium!.color!,
+                  tabbarSelectedForegroundColor: theme.cardColor,
+                  tabbarSelectedBackgroundColor: theme.primaryColor,
+                  itemOutlineColor:
+                      theme.bottomNavigationBarTheme.backgroundColor!,
+                  toolbarItems: [
+                    textDecorationMobileToolbarItem,
+                    buildTextAndBackgroundColorMobileToolbarItem(),
+                    blocksMobileToolbarItem,
+                    linkMobileToolbarItem,
+                    dividerMobileToolbarItem,
+                  ],
+                ),
+              ),
+              // 选中内容时的浮动工具条
+              SliverFillRemaining(
+                child: FloatingToolbar(
+                  items: [
+                    paragraphItem,
+                    ...headingItems,
+                    ...markdownFormatItems,
+                    quoteItem,
+                    bulletedListItem,
+                    numberedListItem,
+                    linkItem,
+                    buildTextColorItem(),
+                    buildHighlightColorItem(),
+                    ...textDirectionItems,
+                    ...alignmentItems,
+                  ],
+                  tooltipBuilder: (context, _, message, child) {
+                    return Tooltip(
+                      message: message,
+                      preferBelow: false,
+                      child: child,
+                    );
+                  },
+                  editorState: editorState,
+                  textDirection: widget.textDirection,
+                  editorScrollController: curState.editorScrollController,
+                  child: Directionality(
+                    textDirection: widget.textDirection,
+                    child: AppFlowyEditor(
+                      showMagnifier: true, //显示放大镜，only works on iOS or Android.
+                      editorState: editorState,
+                      editorScrollController: curState.editorScrollController,
+                      blockComponentBuilders: _buildBlockComponentBuilders(),
+                      commandShortcutEvents: _logic.getCommandShortcuts(
+                        context,
+                      ),
+                      editorStyle: _buildEditorStyle(),
+                      enableAutoComplete: true, // 自动完成，类似ai代码提示
+                      autoCompleteTextProvider: _buildAutoCompleteTextProvider,
+                      dropTargetStyle: const AppFlowyDropTargetStyle(
+                        color: Colors.red,
+                      ),
+                      footer: _buildFooter(editorState), // 页脚
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -99,8 +144,8 @@ class _EditorViewState extends State<EditorView> {
       maxWidth: double.infinity,
       // 每一行输入框前面的组件
       textSpanOverlayBuilder: (_, __, ___) => [],
-      // 应该是拖动光标时下面手柄的颜色
-      dragHandleColor: Colors.teal,
+      // 手机上光标下面手柄的颜色
+      dragHandleColor: theme.primaryColor,
       textSpanDecorator: defaultTextSpanDecoratorForAttribute,
     );
   }

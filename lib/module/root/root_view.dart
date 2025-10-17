@@ -1,7 +1,4 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:free_book/function/screen.dart';
 import 'package:provider/provider.dart';
 
@@ -95,7 +92,7 @@ class _RootViewState extends State<RootView> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(16),
           child: BottomNavigationBar(
             currentIndex: curPageIndex,
             onTap: (index) => _logic.changePage(index, _pageViewCntlr),

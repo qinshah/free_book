@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:flutter/material.dart';
+import 'package:free_book/function/context_extension.dart';
 import 'package:free_book/function/storage.dart';
 import 'package:free_book/module/edit/edit_page_state.dart';
 import 'package:free_book/module/edit/editor/editor_logic.dart';
@@ -86,9 +87,11 @@ class _ToolBar extends StatelessWidget {
               : () async {
                   try {
                     await logic.saveDoc(path, doc);
-                    // TOTO 成功的UI提示
+                    // ignore: use_build_context_synchronously
+                    context.showToast('保存成功');
                   } catch (e) {
-                    // TODO 失败的UI提示
+                    // ignore: use_build_context_synchronously
+                    context.showToast('保存失败：$e', ToastType.error);
                   }
                 },
         ),

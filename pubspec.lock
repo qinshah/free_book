@@ -322,11 +322,12 @@ packages:
   fluttertoast:
     dependency: "direct main"
     description:
-      name: fluttertoast
-      sha256: "144ddd74d49c865eba47abe31cbc746c7b311c82d6c32e571fd73c4264b740e2"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "9.0.0"
+      path: "."
+      ref: HEAD
+      resolved-ref: b904d5000b30d31d0d67fbd96ac53e3320d2e222
+      url: "https://gitcode.com/openharmony-sig/flutter_fluttertoast.git"
+    source: git
+    version: "8.2.2"
   html:
     dependency: transitive
     description:
