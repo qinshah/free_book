@@ -15,10 +15,9 @@ class HomePageLogic extends ViewLogic<HomePageState> {
     final docDir = Directory(Storage.i.docDirPath);
     List<String> docPaths = [];
     await for (final entity in docDir.list()) {
-      // TODO 把草稿.json作为配置比例
       if (entity is File &&
           entity.path.endsWith('.json') &&
-          !entity.path.endsWith('草稿.json')) {
+          entity.path != Storage.i.draftPath) {
         docPaths.add(entity.path);
       }
     }

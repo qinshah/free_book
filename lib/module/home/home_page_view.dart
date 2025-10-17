@@ -122,13 +122,6 @@ class _DocItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 1,
-            spreadRadius: 1,
-            color: Colors.grey.shade300,
-          ),
-        ],
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(10),

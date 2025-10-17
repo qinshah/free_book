@@ -54,7 +54,7 @@ class EditorLogic extends ViewLogic<MyEditorState> {
 
   @override
   void rememberDispose() {
-    curState.editorScrollController.dispose();
-    curState.editorState?.dispose();
+    // curState.editorScrollController.dispose();
+    // curState.editorState?.dispose();
   }
 }

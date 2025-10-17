@@ -13,8 +13,9 @@ class Storage {
 
   late final String docDirPath;
 
-  late final String docStartPath =
-      '${Storage.i.docDirPath}${Platform.pathSeparator}';
+  late final String docStartPath = '$docDirPath${Platform.pathSeparator}';
+
+  late final String draftPath = '$docStartPath草稿.json';
 
   static const String recentDocPathsKey = 'recentDocPaths';
 

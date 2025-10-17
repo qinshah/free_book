@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_floating_bottom_bar/flutter_floating_bottom_bar.dart';
 import 'package:free_book/function/screen.dart';
@@ -9,10 +11,17 @@ import '../home/home_page_view.dart';
 import '../settings/settings_page.dart';
 import 'root_logic.dart';
 
-class RootView extends StatelessWidget {
-  const RootView({super.key, required this.finalLogic});
+class RootView extends StatefulWidget {
+  const RootView({super.key});
 
-  final RootLogic finalLogic;
+  @override
+  State<RootView> createState() => _RootViewState();
+}
+
+class _RootViewState extends State<RootView> {
+  late final _logic = context.read<RootLogic>();
+  final _pageViewCntlr = PageController();
+  final _pageViewKey = GlobalKey();
 
   final _pages = const {
     AppPage(
@@ -51,13 +60,14 @@ class RootView extends StatelessWidget {
       right: false,
       bottom: false,
       top: false,
-      child: Material(
-        child: Row(
+      child: Scaffold(
+        body: Row(
           children: [
             NavigationRail(
               selectedIndex: curPageIndex,
               labelType: NavigationRailLabelType.all,
-              onDestinationSelected: finalLogic.changePage,
+              onDestinationSelected: (index) =>
+                  _logic.changePage(index, _pageViewCntlr),
               destinations: _pages.map((item) {
                 return NavigationRailDestination(
                   icon: item.icon,
@@ -80,26 +90,15 @@ class RootView extends StatelessWidget {
         toolbarHeight: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
+      body: _buildPage(Axis.horizontal),
       extendBody: true,
-      body: BottomBar(
-        body: (context, scrollCntlr) {
-          finalLogic.curState.scrollCntlr = scrollCntlr;
-          return _buildPage(Axis.horizontal);
-        },
-        // fit: StackFit.expand,
-        // 回到顶部按钮
-        icon: (_, _) => Icon(Icons.arrow_upward_rounded),
-        duration: Durations.medium1,
-        barColor: Colors.transparent,
-        start: 2,
-        end: 0,
-        offset: 10,
-        barAlignment: Alignment.bottomCenter,
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: BottomNavigationBar(
             currentIndex: curPageIndex,
-            onTap: finalLogic.changePage,
+            onTap: (index) => _logic.changePage(index, _pageViewCntlr),
             items: _pages.map((page) {
               return BottomNavigationBarItem(icon: page.icon, label: page.name);
             }).toList(),
@@ -111,8 +110,8 @@ class RootView extends StatelessWidget {
 
   Widget _buildPage(Axis direction) {
     return PageView.builder(
-      key: finalLogic.curState.pageViewKey,
-      controller: finalLogic.curState.pageViewCntlr,
+      key: _pageViewKey,
+      controller: _pageViewCntlr,
       scrollDirection: direction,
       physics: NeverScrollableScrollPhysics(),
       itemCount: _pages.length,

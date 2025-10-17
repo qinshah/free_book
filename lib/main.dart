@@ -24,25 +24,29 @@ Future<void> main() async {
   runApp(App(savedThemeMode: savedThemeMode));
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   final AdaptiveThemeMode? savedThemeMode;
 
   const App({super.key, this.savedThemeMode});
 
   @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
   Widget build(BuildContext context) {
-    final rootLogic = RootLogic(RootState());
-    return MultiProvider(
+      return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: rootLogic),
+        ChangeNotifierProvider(create: (_) => RootLogic(RootState())),
         ChangeNotifierProvider(create: (_) => HomePageLogic(HomePageState())),
       ],
       child: AdaptiveTheme(
         light: _getThemeData(),
         dark: _getDarkThemeData(),
-        initial: savedThemeMode ?? AdaptiveThemeMode.system,
+        initial: widget.savedThemeMode ?? AdaptiveThemeMode.system,
         builder: (theme, darkTheme) => MaterialApp(
-          home: RootView(finalLogic: rootLogic),
+          home: RootView(),
           theme: theme,
           darkTheme: darkTheme,
           localizationsDelegates: [

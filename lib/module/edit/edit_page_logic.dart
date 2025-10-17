@@ -36,8 +36,7 @@ class EditPageLogic extends ViewLogic<EditPageState> {
   }
 
   void _setDraftDoc() {
-    // TODO 配置草稿路径
-    final draftPath = '${Storage.i.docDirPath}${Platform.pathSeparator}草稿.json';
+    final draftPath = Storage.i.draftPath;
     if (!File(draftPath).existsSync()) {
       final emptyDocString = jsonEncode(Document.blank().toJson());
       File(draftPath).writeAsStringSync(emptyDocString);

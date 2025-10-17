@@ -193,21 +193,15 @@ class _SaveAsDialogState extends State<_SaveAsDialog> {
 
   Widget _buildOpenNewPageDialog(BuildContext context) {
     final theme = Theme.of(context);
+    final fileName = _logic.curState.saveAsNameCntlr.text;
     return AlertDialog(
       title: Text('已另存，是否打开？'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('文件已另存到'),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Text(
-              _targetFile.path,
-              style: TextStyle(color: theme.primaryColor),
-            ),
-          ),
+          Text('文件已另存为"$fileName"'),
           SizedBox(height: 20),
-          Text('继续编辑当前文档还是打开刚刚另存的文档？'),
+          Text('继续编辑当前文档还是打开"$fileName"？'),
         ],
       ),
       actions: [

@@ -26,9 +26,7 @@ class _EditorViewState extends State<EditorView> {
   void initState() {
     super.initState();
     _logic = context.read<EditorLogic>();
-    _logic.loadDoc(
-      widget.docPath
-    );
+    _logic.loadDoc(widget.docPath);
   }
 
   @override
@@ -39,6 +37,7 @@ class _EditorViewState extends State<EditorView> {
 
   @override
   Widget build(BuildContext context) {
+   final theme = Theme.of(context);
     final curState = context.watch<EditorLogic>().curState;
     final editorState = curState.editorState;
     if (editorState == null) {
@@ -66,16 +65,18 @@ class _EditorViewState extends State<EditorView> {
       editorScrollController: curState.editorScrollController,
       child: Directionality(
         textDirection: widget.textDirection,
-        child: AppFlowyEditor(
-          editorState: editorState,
-          editorScrollController: curState.editorScrollController,
-          blockComponentBuilders: _buildBlockComponentBuilders(),
-          commandShortcutEvents: _logic.getCommandShortcuts(context),
-          editorStyle: _buildEditorStyle(),
-          enableAutoComplete: true, // 自动完成，类似ai代码提示
-          autoCompleteTextProvider: _buildAutoCompleteTextProvider,
-          dropTargetStyle: const AppFlowyDropTargetStyle(color: Colors.red),
-          footer: _buildFooter(editorState), // 页脚
+        child: Card(
+          child: AppFlowyEditor(
+            editorState: editorState,
+            editorScrollController: curState.editorScrollController,
+            blockComponentBuilders: _buildBlockComponentBuilders(),
+            commandShortcutEvents: _logic.getCommandShortcuts(context),
+            editorStyle: _buildEditorStyle(),
+            enableAutoComplete: true, // 自动完成，类似ai代码提示
+            autoCompleteTextProvider: _buildAutoCompleteTextProvider,
+            dropTargetStyle: const AppFlowyDropTargetStyle(color: Colors.red),
+            footer: _buildFooter(editorState), // 页脚
+          ),
         ),
       ),
     );
