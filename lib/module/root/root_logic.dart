@@ -21,13 +21,8 @@ class RootLogic extends ViewLogic<RootState> {
   void _unFocusDraftEditor() {
     final editorState = curState.draftEditorState;
     if (editorState == null) return;
-    final selection = editorState.selection;
-    final newSelection = selection?.copyWith(
-      start: selection.start,
-      end: selection.start, // 将选中片段设为0
-    );
     editorState.updateSelectionWithReason(
-      newSelection,
+      null, // 直接设为空防止键盘弹起
       reason: SelectionUpdateReason.uiEvent, // 切换页面UI改变
     );
   }
