@@ -9,8 +9,11 @@ class EditorView extends StatefulWidget {
   const EditorView(
     this.docPath, {
     super.key,
+    this.isDraft = false,
     this.textDirection = TextDirection.ltr,
   });
+
+  final bool isDraft;
 
   final TextDirection textDirection;
 
@@ -21,12 +24,11 @@ class EditorView extends StatefulWidget {
 }
 
 class _EditorViewState extends State<EditorView> {
-  late final EditorLogic _logic;
+  late final _logic = context.read<EditorLogic>();
   @override
   void initState() {
     super.initState();
-    _logic = context.read<EditorLogic>();
-    _logic.loadDoc(widget.docPath, context);
+    _logic.loadDoc(widget.docPath, context, widget.isDraft);
   }
 
   @override
@@ -73,8 +75,8 @@ class _EditorViewState extends State<EditorView> {
                   ],
                 ),
               ),
-              // 选中内容时的浮动工具条
               SliverFillRemaining(
+                // 选中内容时的浮动工具条
                 child: FloatingToolbar(
                   items: [
                     paragraphItem,
@@ -89,10 +91,16 @@ class _EditorViewState extends State<EditorView> {
                     ...textDirectionItems,
                     ...alignmentItems,
                   ],
+                  // 浮动条的构建
+                  // toolbarBuilder:
+                  //     (context, child, onDismiss, isMetricsChanged) {
+                  //       return Text('data');
+                  //     },
+                  // 每项的构建
                   tooltipBuilder: (context, _, message, child) {
                     return Tooltip(
                       message: message,
-                      preferBelow: false,
+                      preferBelow: true,
                       child: child,
                     );
                   },

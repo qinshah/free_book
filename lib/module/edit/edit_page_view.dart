@@ -59,7 +59,7 @@ class _EditPageViewState extends State<EditPageView>
                   // TODO 重构UI
                   actions: [_ToolBar()],
                 ),
-                body: EditorView(curState.docPath),
+                body: EditorView(curState.docPath, isDraft: widget.isDraft),
               );
             },
           ),

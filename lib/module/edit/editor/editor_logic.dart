@@ -6,19 +6,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:free_book/function/context_extension.dart';
 import 'package:free_book/function/state_management.dart';
+import 'package:free_book/module/root/root_logic.dart';
+import 'package:provider/provider.dart';
 
 import 'editor_state.dart';
 
 class EditorLogic extends ViewLogic<MyEditorState> {
   EditorLogic(super.curState);
 
-  Future<void> loadDoc(String? docPath, BuildContext context) async {
+  Future<void> loadDoc(
+    String? docPath,
+    BuildContext context,
+    bool isDraft,
+  ) async {
     EditorState editorState = await _loadEditor(docPath, context);
+    // editorState.ad
     // 日志
-    editorState.logConfiguration.level = AppFlowyEditorLogLevel.off;
+    editorState.logConfiguration
+      ..handler = debugPrint
+      ..level = AppFlowyEditorLogLevel.off;
     curState.editorScrollController = EditorScrollController(
       editorState: editorState,
     );
+    if (isDraft) {
+      // 更新草稿编辑器对象
+      // ignore: use_build_context_synchronously
+      final rootLogic = context.read<RootLogic>();
+      rootLogic.curState.draftEditorState = editorState;
+    }
     rebuildState(curState..editorState = editorState);
   }
 
