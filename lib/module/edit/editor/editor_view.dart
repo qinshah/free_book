@@ -102,6 +102,7 @@ class _EditorViewState extends State<EditorView> {
                   child: Directionality(
                     textDirection: widget.textDirection,
                     child: AppFlowyEditor(
+                      autoFocus: true,
                       showMagnifier: true, //显示放大镜，only works on iOS or Android.
                       editorState: editorState,
                       editorScrollController: curState.editorScrollController,

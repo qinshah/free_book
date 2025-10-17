@@ -28,6 +28,7 @@ Future<void> main() async {
 
   late final AdaptiveThemeMode? savedThemeMode;
   try {
+    // TODO 鸿蒙不支持持久化此主题设置
     savedThemeMode = await AdaptiveTheme.getThemeMode();
   } catch (e) {
     debugPrint('保存的app主题获取失败: $e');

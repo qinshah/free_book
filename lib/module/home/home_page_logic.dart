@@ -44,4 +44,13 @@ class HomePageLogic extends ViewLogic<HomePageState> {
     await Storage.i.sp.remove(Storage.recentDocPathsKey);
     rebuildState(curState..recentDocPaths = []);
   }
+
+  Future<void> removeDoc(String docPath) async {
+    final newRecentDocPaths = curState.recentDocPaths..remove(docPath);
+    await Storage.i.sp.setStringList(
+      Storage.recentDocPathsKey,
+      newRecentDocPaths,
+    );
+    rebuildState(curState..recentDocPaths = newRecentDocPaths);
+  }
 }

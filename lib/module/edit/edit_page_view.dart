@@ -55,7 +55,6 @@ class _EditPageViewState extends State<EditPageView>
               final curState = context.watch<EditPageLogic>().curState;
               return Scaffold(
                 appBar: AppBar(
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   title: SelectableText(curState.docName),
                   // TODO 重构UI
                   actions: [_ToolBar()],

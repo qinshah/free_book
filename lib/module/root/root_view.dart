@@ -83,10 +83,7 @@ class _RootViewState extends State<RootView> {
     // final theme = Theme.of(context);
     var curPageIndex = context.watch<RootLogic>().curState.pageIndex;
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 0,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      ),
+      appBar: AppBar(toolbarHeight: 0),
       body: _buildPage(Axis.horizontal),
       extendBody: true,
       bottomNavigationBar: Padding(
