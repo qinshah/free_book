@@ -322,12 +322,11 @@ packages:
   fluttertoast:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: b904d5000b30d31d0d67fbd96ac53e3320d2e222
-      url: "https://gitcode.com/openharmony-sig/flutter_fluttertoast.git"
-    source: git
-    version: "8.2.2"
+      name: fluttertoast
+      sha256: "144ddd74d49c865eba47abe31cbc746c7b311c82d6c32e571fd73c4264b740e2"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "9.0.0"
   html:
     dependency: transitive
     description:
@@ -352,6 +351,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.1.2"
+  icons_launcher:
+    dependency: "direct main"
+    description:
+      name: icons_launcher
+      sha256: "6317d56a73ee528f1dd570d7cd7be120ce58014e0fe635d141ada3d88782f58d"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.0.3"
   image:
     dependency: transitive
     description:
@@ -923,6 +930,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "6.6.1"
+  yaml:
+    dependency: transitive
+    description:
+      name: yaml
+      sha256: b9da305ac7c39faa3f030eccd175340f968459dae4af175130b3fc47e40d76ce
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.1.3"
 sdks:
   dart: ">=3.8.1 <4.0.0"
   flutter: ">=3.32.0"
