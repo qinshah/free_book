@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:free_book/function/context_extension.dart';
+import 'package:free_book/function/storage.dart';
 import 'package:free_book/module/root/root_logic.dart';
 import 'package:free_book/module/trash/trash_page.dart';
 import 'package:provider/provider.dart';
@@ -111,103 +112,6 @@ class _HomePageViewState extends State<HomePageView> {
   }
 }
 
-class _DocItem extends StatefulWidget {
-  const _DocItem(this.docPath, {required super.key});
-
-  final String docPath;
-
-  @override
-  State<_DocItem> createState() => _DocItemState();
-}
-
-class _DocItemState extends State<_DocItem> {
-  late final _logic = context.read<HomePageLogic>();
-  late final _menuEntries = <ContextMenuEntry>[
-    MenuItem(
-      label: '移到回收站',
-      icon: Icons.delete_outlined,
-      onSelected: () async {
-        try {
-          await _logic.moveDocToTrash(widget.docPath);
-          // ignore: use_build_context_synchronously
-          context.showToast('已移到回收站', ToastType.success);
-        } catch (e) {
-          // ignore: use_build_context_synchronously
-          context.showToast('移动失败：$e', ToastType.error);
-        }
-      },
-    ),
-    MenuItem(
-      label: '永久删除',
-      icon: Icons.delete_outlined,
-      color: Colors.red,
-      onSelected: () => showDialog(
-        context: context,
-        builder: (_) => _DeleteDialog(widget.docPath),
-      ),
-    ),
-  ];
-
-  Offset _tapPosition = Offset.zero;
-  late final _file = File(widget.docPath);
-
-  @override
-  Widget build(BuildContext context) {
-    final exists = _file.existsSync();
-    final color = exists ? null : Colors.grey;
-    return Card(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTapDown: (details) => _tapPosition = details.globalPosition,
-        onSecondaryTapDown: (details) => _tapPosition = details.globalPosition,
-        onLongPress: () => _showMenu(context),
-        onSecondaryTap: () => _showMenu(context),
-        onTap: exists
-            ? () => _openDoc(context)
-            : () async {
-                context.showToast('文档不存在', ToastType.warn);
-                await _logic.removeRecentDoc(widget.docPath);
-                _logic.loadDocList();
-              },
-        child: ListTile(
-          textColor: color,
-          title: Text(
-            widget.docPath.split('/').last.split('.').first,
-            overflow: TextOverflow.ellipsis,
-          ),
-          subtitle: Text(
-            exists ? _file.lastModifiedSync().toString() : '文档不存在',
-          ),
-          trailing: InkWell(
-            borderRadius: BorderRadius.circular(9999),
-            onTapDown: (details) => _tapPosition = details.globalPosition,
-            onTap: () => _showMenu(context),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.more_vert),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showMenu(BuildContext context) {
-    final menu = ContextMenu(position: _tapPosition, entries: _menuEntries);
-    menu.show(context);
-  }
-
-  Future<void> _openDoc(BuildContext context) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => EditPageView(widget.docPath)),
-    );
-    if (context.mounted) {
-      // 刷新列表
-      context.read<HomePageLogic>().loadDocList();
-    }
-  }
-}
-
 class _ExampleDocItem extends StatelessWidget {
   const _ExampleDocItem(this.assetPath);
 
@@ -242,6 +146,203 @@ class _ExampleDocItem extends StatelessWidget {
     if (context.mounted) {
       // 刷新列表
       context.read<HomePageLogic>().loadDocList();
+    }
+  }
+}
+
+class _DocItem extends StatefulWidget {
+  const _DocItem(this.docPath, {required super.key});
+
+  final String docPath;
+
+  @override
+  State<_DocItem> createState() => _DocItemState();
+}
+
+class _DocItemState extends State<_DocItem> {
+  late final _logic = context.read<HomePageLogic>();
+  late final _menuEntries = <ContextMenuEntry>[
+    MenuItem(
+      label: '重命名',
+      icon: Icons.edit_outlined,
+      onSelected: () => showDialog(
+        context: context,
+        builder: (BuildContext context) => _RenameDialog(widget.docPath),
+      ),
+    ),
+    MenuItem(
+      label: '移到回收站',
+      icon: Icons.delete_outlined,
+      onSelected: () async {
+        try {
+          await _logic.moveDocToTrash(widget.docPath);
+          // ignore: use_build_context_synchronously
+          context.showToast('已移到回收站', ToastType.success);
+        } catch (e) {
+          // ignore: use_build_context_synchronously
+          context.showToast('移动失败：$e', ToastType.error);
+        }
+      },
+    ),
+    MenuItem(
+      label: '永久删除',
+      icon: Icons.delete_outlined,
+      color: Colors.red,
+      onSelected: () => showDialog(
+        context: context,
+        builder: (_) => _DeleteDialog(widget.docPath),
+      ),
+    ),
+  ];
+
+  Offset _tapPosition = Offset.zero;
+  late final _file = File(widget.docPath);
+  late final _name = widget.docPath
+      .split(Platform.pathSeparator)
+      .last
+      .split('.')
+      .first;
+
+  @override
+  Widget build(BuildContext context) {
+    final exists = _file.existsSync();
+    return Card(
+      child: !exists
+          ? InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () async {
+                context.showToast('文档不存在，已自动移除', ToastType.warn);
+                await _logic.removeRecentDoc(widget.docPath);
+                _logic.loadDocList();
+              },
+              child: ListTile(
+                title: Text(_name),
+                subtitle: Text('文档源文件已丢失'),
+                textColor: Colors.grey,
+              ),
+            )
+          : InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTapDown: (details) => _tapPosition = details.globalPosition,
+              onSecondaryTapDown: (details) =>
+                  _tapPosition = details.globalPosition,
+              onLongPress: () => _showMenu(context),
+              onSecondaryTap: () => _showMenu(context),
+              onTap: () => _openDoc(context),
+              child: ListTile(
+                title: Text(
+                  widget.docPath.split('/').last.split('.').first,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                subtitle: Text(_file.lastModifiedSync().toString()),
+                trailing: InkWell(
+                  borderRadius: BorderRadius.circular(9999),
+                  onTapDown: (details) => _tapPosition = details.globalPosition,
+                  onTap: () => _showMenu(context),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.more_vert),
+                  ),
+                ),
+              ),
+            ),
+    );
+  }
+
+  void _showMenu(BuildContext context) {
+    final menu = ContextMenu(position: _tapPosition, entries: _menuEntries);
+    menu.show(context);
+  }
+
+  Future<void> _openDoc(BuildContext context) async {
+    // 还是再确认一下是否在打开前文件被删除了
+    if (!_file.existsSync()) {
+      context.showToast('文档源文件已丢失，打开失败', ToastType.error);
+      _logic.loadDocList(); // 只需要重新加载列表，不存在的自动变灰
+      return;
+    }
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => EditPageView(widget.docPath)),
+    );
+    if (context.mounted) {
+      // 刷新列表
+      context.read<HomePageLogic>().loadDocList();
+    }
+  }
+}
+
+class _RenameDialog extends StatefulWidget {
+  const _RenameDialog(this.path);
+
+  final String path;
+
+  @override
+  State<_RenameDialog> createState() => _RenameDialogState();
+}
+
+class _RenameDialogState extends State<_RenameDialog> {
+  String? _error = '';
+  late final _logic = context.read<HomePageLogic>();
+  String _name = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('重命名'),
+      content: TextField(
+        autofocus: true,
+        onChanged: (value) async {
+          _name = value;
+          final error = await _checkNameError(value);
+          setState(() => _error = error);
+        },
+        onSubmitted: _error == null ? (_) => _rename() : null,
+        decoration: InputDecoration(
+          hintText: '输入新名称',
+          errorText: _error == null || _error!.isEmpty ? null : _error,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text('取消'),
+        ),
+        TextButton(
+          onPressed: _error == null ? _rename : null,
+          child: Text('确定'),
+        ),
+      ],
+    );
+  }
+
+  void _rename() async {
+    if (await _checkNameError(_name) != null) return;
+    try {
+      if (mounted) Navigator.of(context).pop();
+      await _logic.renameDoc(widget.path, _name);
+      _logic.loadDocList();
+      // ignore: use_build_context_synchronously
+      context.showToast('重命名成功', ToastType.success);
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      context.showToast('重命名失败$e', ToastType.error);
+    }
+  }
+
+  Future<String?> _checkNameError(String value) async {
+    if (value.isEmpty) {
+      return '';
+    } else if (value.startsWith(' ')) {
+      return '不能以空格开头';
+    }
+    final file = File('${Storage.i.docStartPath}$value.json');
+    try {
+      if (await file.exists()) {
+        return '已存在同名文件';
+      }
+      return null;
+    } catch (e) {
+      return e.toString();
     }
   }
 }

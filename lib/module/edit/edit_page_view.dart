@@ -173,7 +173,7 @@ class _SaveAsDialogState extends State<_SaveAsDialog> {
       homeLogic.addDocToRecent(_targetFile.path); // 添加到最近文档列表
       if (!mounted) return;
       Navigator.of(context).pop();
-      showAdaptiveDialog(context: context, builder: _buildOpenNewPageDialog);
+      showDialog(context: context, builder: _buildOpenNewPageDialog);
     } catch (e) {
       setState(() => _error = '保存失败：$e');
     }

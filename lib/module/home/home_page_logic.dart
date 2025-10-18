@@ -70,4 +70,19 @@ class HomePageLogic extends ViewLogic<HomePageState> {
       return entity is File && entity.path.endsWith('.trash');
     }).length;
   }
+
+  Future<void> renameDoc(String path, String name) async {
+    final newPath =
+        '${path.substring(0, path.lastIndexOf(Platform.pathSeparator) + 1)}$name.json';
+    await File(path).rename(newPath);
+    final recentDocPaths = curState.recentDocPaths;
+    final index = recentDocPaths.indexOf(path);
+    if (index != -1) {
+      recentDocPaths[index] = newPath;
+      await Storage.i.sp.setStringList(
+        Storage.recentDocPathsKey,
+        recentDocPaths,
+      );
+    }
+  }
 }
