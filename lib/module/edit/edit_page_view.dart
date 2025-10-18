@@ -7,6 +7,7 @@ import 'package:free_book/function/storage.dart';
 import 'package:free_book/module/edit/edit_page_state.dart';
 import 'package:free_book/module/edit/editor/editor_logic.dart';
 import 'package:free_book/module/edit/editor/editor_state.dart';
+import 'package:free_book/module/home/home_page_logic.dart';
 import 'package:provider/provider.dart';
 
 import 'edit_page_logic.dart';
@@ -167,6 +168,9 @@ class _SaveAsDialogState extends State<_SaveAsDialog> {
   void _saveAs() async {
     try {
       await _logic.saveDoc((await _targetFile.create()).path, widget.doc);
+      // ignore: use_build_context_synchronously
+      final homeLogic = context.read<HomePageLogic>();
+      homeLogic.addDocToRecent(_targetFile.path); // 添加到最近文档列表
       if (!mounted) return;
       Navigator.of(context).pop();
       showAdaptiveDialog(context: context, builder: _buildOpenNewPageDialog);

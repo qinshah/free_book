@@ -5,8 +5,8 @@ import '../../function/state_management.dart';
 
 class RootState extends ViewState {
   EditorState? draftEditorState;
+  Selection? draftSelection;
 
   int pageIndex = 0;
-
   ScrollController scrollCntlr = ScrollController();
 }

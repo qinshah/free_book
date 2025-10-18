@@ -21,6 +21,7 @@ dependencies:
   file_selector: # 文件选择器.鸿蒙移植版
   shared_preferences: # 缓存.鸿蒙移植版
   icons_launcher: ^3.0.3 # 图标生成
+  flutter_context_menu: ^0.3.0 # 右键菜单
 
 dependency_overrides:
   # fluttertoast: # 系统级toast提示.鸿蒙移植版

@@ -45,12 +45,29 @@ class HomePageLogic extends ViewLogic<HomePageState> {
     rebuildState(curState..recentDocPaths = []);
   }
 
-  Future<void> removeDoc(String docPath) async {
+  Future<void> deleteDoc(String docPath) async {
+    await File(docPath).delete();
+    await removeRecentDoc(docPath);
+    await loadDocList();
+  }
+
+  Future<void> moveDocToTrash(String docPath) async {
+    await File(docPath).rename('$docPath.trash');
+    await removeRecentDoc(docPath);
+    await loadDocList();
+  }
+
+  Future<void> removeRecentDoc(String docPath) async {
     final newRecentDocPaths = curState.recentDocPaths..remove(docPath);
     await Storage.i.sp.setStringList(
       Storage.recentDocPathsKey,
       newRecentDocPaths,
     );
-    rebuildState(curState..recentDocPaths = newRecentDocPaths);
+  }
+
+  int getTrashDocCount() {
+    return Directory(Storage.i.docDirPath).listSync().where((entity) {
+      return entity is File && entity.path.endsWith('.trash');
+    }).length;
   }
 }

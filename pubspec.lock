@@ -272,6 +272,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_context_menu:
+    dependency: "direct main"
+    description:
+      name: flutter_context_menu
+      sha256: "79fe00cd7e3ac3840a552cb3e653d8eb61d827b6c04c559e219973a1dc769165"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.3.0"
   flutter_floating_bottom_bar:
     dependency: "direct main"
     description:

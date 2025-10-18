@@ -54,6 +54,20 @@ class _EditorViewState extends State<EditorView> {
           child: CustomScrollView(
             physics: const NeverScrollableScrollPhysics(),
             slivers: [
+              // SliverToBoxAdapter(
+              //   child: TextButton(
+              //     onPressed: () {
+              //       SelectionMenu(
+              //         context: context,
+              //         editorState: editorState,
+              //         selectionMenuItems: standardSelectionMenuItems,
+              //         deleteSlashByDefault: false,
+              //         singleColumn: true,
+              //       ).show();
+              //     },
+              //     child: Text('测试'),
+              //   ),
+              // ),
               SliverToBoxAdapter(
                 // 工具条
                 child: MobileToolbar(
@@ -115,6 +129,7 @@ class _EditorViewState extends State<EditorView> {
                       editorState: editorState,
                       editorScrollController: curState.editorScrollController,
                       blockComponentBuilders: _buildBlockComponentBuilders(),
+                      characterShortcutEvents: null, // [], // 输入斜杠后弹出的功能
                       commandShortcutEvents: _logic.getCommandShortcuts(
                         context,
                       ),

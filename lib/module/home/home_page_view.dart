@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:free_book/function/context_extension.dart';
 import 'package:free_book/function/storage.dart';
 import 'package:free_book/module/root/root_logic.dart';
+import 'package:free_book/module/trash/trash_page.dart';
 import 'package:provider/provider.dart';
 
 import '../edit/edit_page_view.dart';
@@ -41,32 +43,8 @@ class _HomePageViewState extends State<HomePageView> {
               SizedBox(height: 22),
               Text('示例', style: TextStyle(fontSize: 20)),
               SizedBox(height: 6),
-              _DocItem('assets/示例文档.json', isAsset: true),
-              SizedBox(height: 22),
-              Row(
-                children: [
-                  Text('全部', style: TextStyle(fontSize: 20)),
-                  Spacer(),
-                  if (kDebugMode)
-                    TextButton(
-                      onPressed: () async {
-                        await for (final entity in Directory(
-                          Storage.i.docDirPath,
-                        ).list()) {
-                          if (entity is File &&
-                              entity.path.endsWith('.json') &&
-                              !entity.path.endsWith('草稿.json')) {
-                            entity.delete();
-                          }
-                        }
-                        _logic.loadDocList();
-                      },
-                      child: Text('全部删除'),
-                    ),
-                ],
-              ),
-              SizedBox(height: 6),
-              _buildDocList(curState.docPaths),
+              _ExampleDocItem('assets/示例文档.json'),
+              // ————————————
               SizedBox(height: 22),
               Row(
                 children: [
@@ -78,6 +56,32 @@ class _HomePageViewState extends State<HomePageView> {
               ),
               SizedBox(height: 6),
               _buildDocList(curState.recentDocPaths),
+              // ————————————
+              SizedBox(height: 22),
+              Text('全部', style: TextStyle(fontSize: 20)),
+              SizedBox(height: 6),
+              _buildDocList(curState.docPaths),
+              SizedBox(height: 22),
+              Card(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  child: ListTile(
+                    leading: Icon(Icons.delete_outlined),
+                    title: Text('回收站'),
+                    subtitle: Text('${_logic.getTrashDocCount()}个文档'),
+                    trailing: Icon(Icons.arrow_forward_ios_rounded),
+                  ),
+                  onTap: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const TrashPage(),
+                      ),
+                    );
+                    _logic.loadDocList();
+                  },
+                ),
+              ),
+              SizedBox(height: 100),
             ],
           );
         },
@@ -102,68 +106,134 @@ class _HomePageViewState extends State<HomePageView> {
       children: List.generate(filePaths.length, (index) {
         return Padding(
           padding: const EdgeInsets.only(top: 6),
-          child: _DocItem(filePaths[index]),
+          child: _DocItem(filePaths[index], key: Key(filePaths[index])),
         );
       }),
     );
   }
 }
 
-class _DocItem extends StatelessWidget {
-  const _DocItem(this.docPath, {this.isAsset = false});
+class _DocItem extends StatefulWidget {
+  const _DocItem(this.docPath, {required super.key});
 
   final String docPath;
 
-  final bool isAsset;
+  @override
+  State<_DocItem> createState() => _DocItemState();
+}
+
+class _DocItemState extends State<_DocItem> {
+  late final _logic = context.read<HomePageLogic>();
+  late final _menuEntries = <ContextMenuEntry>[
+    MenuItem(
+      label: '移到回收站',
+      icon: Icons.delete_outlined,
+      onSelected: () async {
+        try {
+          await _logic.moveDocToTrash(widget.docPath);
+          // ignore: use_build_context_synchronously
+          context.showToast('已移到回收站', ToastType.success);
+        } catch (e) {
+          // ignore: use_build_context_synchronously
+          context.showToast('移动失败：$e', ToastType.error);
+        }
+      },
+    ),
+    MenuItem(
+      label: '永久删除',
+      icon: Icons.delete_outlined,
+      color: Colors.red,
+      onSelected: () => showDialog(
+        context: context,
+        builder: (_) => _DeleteDialog(widget.docPath),
+      ),
+    ),
+  ];
+
+  Offset _tapPosition = Offset.zero;
+  late final _file = File(widget.docPath);
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.surface;
-    if (isAsset) {
-      return _buildTile(
-        color: color,
-        context: context,
-        trailing: Icon(Icons.file_open_outlined),
-      );
-    }
-    final file = File(docPath);
-    final deleted = !file.existsSync();
-    return _buildTile(
-      color: color,
-      context: context,
-      deleted: deleted,
-      trailing: deleted
-          ? Icon(Icons.delete_forever_rounded, color: Colors.grey)
-          : Text(file.lastModifiedSync().toString().substring(0, 16)),
-    );
-  }
-
-  Ink _buildTile({
-    required Color color,
-    required BuildContext context,
-    required Widget trailing,
-    bool deleted = false,
-  }) {
+    final exists = _file.existsSync();
+    final color = exists ? null : Colors.grey;
     return Ink(
       decoration: BoxDecoration(
-        color: color,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(10),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(10),
-        onTap: deleted
-            ? () {
-                context.read<HomePageLogic>().removeDoc(docPath);
+        onTapDown: (details) => _tapPosition = details.globalPosition,
+        onSecondaryTapDown: (details) => _tapPosition = details.globalPosition,
+        onLongPress: () => _showMenu(context),
+        onSecondaryTap: () => _showMenu(context),
+        onTap: exists
+            ? () => _openDoc(context)
+            : () async {
                 context.showToast('文档不存在', ToastType.warn);
-              }
-            : () => _openDoc(context),
+                await _logic.removeRecentDoc(widget.docPath);
+                _logic.loadDocList();
+              },
         child: ListTile(
+          textColor: color,
           title: Text(
-            docPath.split('/').last.split('.').first,
-            style: TextStyle(fontSize: 16, color: deleted ? Colors.grey : null),
+            widget.docPath.split('/').last.split('.').first,
             overflow: TextOverflow.ellipsis,
           ),
-          trailing: trailing,
+          subtitle: Text(
+            exists ? _file.lastModifiedSync().toString() : '文档不存在',
+          ),
+          trailing: MouseRegion(
+            onHover: (event) => _tapPosition = event.original!.position,
+            child: IconButton(
+              icon: Icon(Icons.more_vert),
+              onPressed: () => _showMenu(context),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showMenu(BuildContext context) {
+    final menu = ContextMenu(position: _tapPosition, entries: _menuEntries);
+    menu.show(context);
+  }
+
+  Future<void> _openDoc(BuildContext context) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => EditPageView(widget.docPath)),
+    );
+    if (context.mounted) {
+      // 刷新列表
+      context.read<HomePageLogic>().loadDocList();
+    }
+  }
+}
+
+class _ExampleDocItem extends StatelessWidget {
+  const _ExampleDocItem(this.assetPath);
+
+  final String assetPath;
+
+  @override
+  Widget build(BuildContext context) {
+    return Ink(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: () => _openDoc(context),
+        child: ListTile(
+          title: Text(
+            assetPath.split('/').last.split('.').first,
+            style: TextStyle(fontSize: 16),
+            overflow: TextOverflow.ellipsis,
+          ),
+          trailing: Icon(Icons.file_open_outlined),
         ),
       ),
     );
@@ -172,10 +242,45 @@ class _DocItem extends StatelessWidget {
   Future<void> _openDoc(BuildContext context) async {
     await Navigator.of(
       context,
-    ).push(MaterialPageRoute(builder: (context) => EditPageView(docPath)));
+    ).push(MaterialPageRoute(builder: (context) => EditPageView(assetPath)));
     if (context.mounted) {
       // 刷新列表
       context.read<HomePageLogic>().loadDocList();
     }
+  }
+}
+
+class _DeleteDialog extends StatelessWidget {
+  const _DeleteDialog(this.docPath);
+
+  final String docPath;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('删除文档'),
+      content: Text('确定要永久删除此文档吗？'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text('取消'),
+        ),
+        TextButton(
+          onPressed: () async {
+            Navigator.of(context).pop();
+            try {
+              final logic = context.read<HomePageLogic>();
+              await logic.deleteDoc(docPath);
+              // ignore: use_build_context_synchronously
+              context.showToast('删除成功', ToastType.success);
+            } catch (e) {
+              // ignore: use_build_context_synchronously
+              context.showToast('删除失败：$e', ToastType.error);
+            }
+          },
+          child: Text('删除', style: TextStyle(color: Colors.red)),
+        ),
+      ],
+    );
   }
 }
