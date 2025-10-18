@@ -30,6 +30,12 @@ class _TrashPageState extends State<TrashPage> {
                 final file = files[index];
                 return Card(
                   child: InkWell(
+                    onTap: () => showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return _buildRestoreDialog(context, file);
+                      },
+                    ),
                     borderRadius: BorderRadius.circular(12),
                     child: ListTile(
                       title: Text(
@@ -39,9 +45,14 @@ class _TrashPageState extends State<TrashPage> {
                             .split('.')
                             .first,
                       ),
-                      trailing: TextButton(
-                        onPressed: () => _restoreFile(file, context),
-                        child: Text('还原'),
+                      trailing: IconButton(
+                        onPressed: () => showDialog(
+                          context: context,
+                          builder: (context) {
+                            return _buildDeleteDialog(context, file);
+                          },
+                        ),
+                        icon: Icon(Icons.delete, color: Colors.red),
                       ),
                     ),
                   ),
@@ -76,6 +87,58 @@ class _TrashPageState extends State<TrashPage> {
       } catch (e) {
         context.showToast('还原失败: $e', ToastType.error);
       }
+    }
+  }
+
+  Widget _buildRestoreDialog(BuildContext context, File file) => AlertDialog(
+    title: Text('还原'),
+    content: Text('确定要还原该文件吗？'),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: Text('取消'),
+      ),
+      TextButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+          _restoreFile(file, context);
+        },
+        child: Text('确定'),
+      ),
+    ],
+  );
+
+  Widget _buildDeleteDialog(BuildContext context, File file) => AlertDialog(
+    title: Text('永久删除'),
+    content: Text('确定要永久删除该文件吗？'),
+    actions: [
+      TextButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        child: Text('取消'),
+      ),
+      TextButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+          _deleteFile(file);
+        },
+        child: Text('确定', style: TextStyle(color: Colors.red)),
+      ),
+    ],
+  );
+
+  Future<void> _deleteFile(File file) async {
+    try {
+      await file.delete();
+      // ignore: use_build_context_synchronously
+      context.showToast('删除成功');
+      setState(() {
+        // 刷新列表
+      });
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      context.showToast('删除失败: $e', ToastType.error);
     }
   }
 }

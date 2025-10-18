@@ -1,10 +1,7 @@
 import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:free_book/function/context_extension.dart';
-import 'package:free_book/function/storage.dart';
 import 'package:free_book/module/root/root_logic.dart';
 import 'package:free_book/module/trash/trash_page.dart';
 import 'package:provider/provider.dart';
@@ -62,13 +59,14 @@ class _HomePageViewState extends State<HomePageView> {
               SizedBox(height: 6),
               _buildDocList(curState.docPaths),
               SizedBox(height: 22),
+              Text('回收站', style: TextStyle(fontSize: 20)),
+              SizedBox(height: 6),
               Card(
                 child: InkWell(
                   borderRadius: BorderRadius.circular(12),
                   child: ListTile(
-                    leading: Icon(Icons.delete_outlined),
-                    title: Text('回收站'),
-                    subtitle: Text('${_logic.getTrashDocCount()}个文档'),
+                    leading: Icon(Icons.delete_outlined, color: Colors.brown),
+                    title: Text('${_logic.getTrashDocCount()}'),
                     trailing: Icon(Icons.arrow_forward_ios_rounded),
                   ),
                   onTap: () async {
@@ -157,13 +155,9 @@ class _DocItemState extends State<_DocItem> {
   Widget build(BuildContext context) {
     final exists = _file.existsSync();
     final color = exists ? null : Colors.grey;
-    return Ink(
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
+    return Card(
       child: InkWell(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         onTapDown: (details) => _tapPosition = details.globalPosition,
         onSecondaryTapDown: (details) => _tapPosition = details.globalPosition,
         onLongPress: () => _showMenu(context),
@@ -184,11 +178,13 @@ class _DocItemState extends State<_DocItem> {
           subtitle: Text(
             exists ? _file.lastModifiedSync().toString() : '文档不存在',
           ),
-          trailing: MouseRegion(
-            onHover: (event) => _tapPosition = event.original!.position,
-            child: IconButton(
-              icon: Icon(Icons.more_vert),
-              onPressed: () => _showMenu(context),
+          trailing: InkWell(
+            borderRadius: BorderRadius.circular(9999),
+            onTapDown: (details) => _tapPosition = details.globalPosition,
+            onTap: () => _showMenu(context),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(Icons.more_vert),
             ),
           ),
         ),

@@ -1,8 +1,8 @@
 # 自由记
 
-拿来随便记东西
+基于 Appflowy Editor 开发的文档编辑器
 
-Beta 阶段，Bub 很多，需要完善
+Beta 阶段，Bug 很多，需要完善
 
 ## 截图
 
