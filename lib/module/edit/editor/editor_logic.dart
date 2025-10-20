@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -20,7 +21,6 @@ class EditorLogic extends ViewLogic<MyEditorState> {
     bool isDraft,
   ) async {
     EditorState editorState = await _loadEditor(docPath, context);
-    // editorState.ad
     // 日志
     editorState.logConfiguration
       ..handler = debugPrint
@@ -67,9 +67,33 @@ class EditorLogic extends ViewLogic<MyEditorState> {
     ];
   }
 
+  bool onPanStart(DragStartDetails details) {
+    print(details);
+    print(details.kind);
+    return true;
+  }
+
   @override
   void rememberDispose() {
+    // TODO 设置key
+    curState.editorState?.service.selectionService.unregisterGestureInterceptor(
+      'test',
+    );
     // curState.editorScrollController.dispose();
     // curState.editorState?.dispose();
+  }
+
+  void showFloatingToolbar(_) {
+    // TODO
+    // if (!MyEditorState.showFloatingToolbar) {
+    //   MyEditorState.showFloatingToolbar = true;
+    //   rebuildState(curState);
+    // }
+    // MyEditorState.floatingToolbarTimer?.cancel();
+    // // 3秒后隐藏
+    // MyEditorState.floatingToolbarTimer = Timer(const Duration(seconds: 3), () {
+    //   MyEditorState.showFloatingToolbar = false;
+    //   rebuildState(curState);
+    // });
   }
 }

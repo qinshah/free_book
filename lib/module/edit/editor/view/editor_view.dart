@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:free_book/module/edit/editor/drag_to_reorder_editor.dart';
+import 'package:free_book/module/edit/editor/editor_state.dart';
+import 'package:free_book/module/edit/editor/view/tool_bar.dart';
 import 'package:provider/provider.dart';
 
-import 'editor_logic.dart';
-import 'package:appflowy_editor/appflowy_editor.dart';
+import '../editor_logic.dart';
+import 'package:appflowy_editor/appflowy_editor.dart' hide ContextMenu;
 
 class EditorView extends StatefulWidget {
   const EditorView(
@@ -52,99 +55,113 @@ class _EditorViewState extends State<EditorView> {
         child: ColoredBox(
           color: theme.cardColor,
           child: CustomScrollView(
+            scrollBehavior: ScrollConfiguration.of(
+              context,
+            ).copyWith(scrollbars: false),
             physics: const NeverScrollableScrollPhysics(),
             slivers: [
+              // if (kDebugMode)
+              //   SliverToBoxAdapter(
+              //     child: TextButton(
+              //       onPressed: () {
+              //         // editorState.selectionService.onPanUpdate(details, mode)
+              //         // SelectionMenu(
+              //         //   context: context,
+              //         //   editorState: editorState,
+              //         //   selectionMenuItems: standardSelectionMenuItems,
+              //         //   deleteSlashByDefault: false,
+              //         //   singleColumn: true,
+              //         // ).show();
+              //       },
+              //       child: Text('测试'),
+              //     ),
+              //   ),
+              // 工具栏
+              SliverToBoxAdapter(child: ToolBar()),
               // SliverToBoxAdapter(
-              //   child: TextButton(
-              //     onPressed: () {
-              //       SelectionMenu(
-              //         context: context,
-              //         editorState: editorState,
-              //         selectionMenuItems: standardSelectionMenuItems,
-              //         deleteSlashByDefault: false,
-              //         singleColumn: true,
-              //       ).show();
-              //     },
-              //     child: Text('测试'),
+              //   // 工具条
+              //   child: MobileToolbar(
+              //     editorState: editorState,
+              //     toolbarHeight: 38,
+              //     backgroundColor:
+              //         theme.bottomNavigationBarTheme.backgroundColor!,
+              //     foregroundColor: theme.textTheme.bodyMedium!.color!,
+              //     tabbarSelectedForegroundColor: theme.cardColor,
+              //     tabbarSelectedBackgroundColor: theme.primaryColor,
+              //     itemOutlineColor:
+              //         theme.bottomNavigationBarTheme.backgroundColor!,
+              //     toolbarItems: [
+              //       textDecorationMobileToolbarItem,
+              //       buildTextAndBackgroundColorMobileToolbarItem(),
+              //       blocksMobileToolbarItem,
+              //       linkMobileToolbarItem,
+              //       dividerMobileToolbarItem,
+              //     ],
               //   ),
               // ),
-              SliverToBoxAdapter(
-                // 工具条
-                child: MobileToolbar(
-                  editorState: editorState,
-                  toolbarHeight: 38,
-                  backgroundColor:
-                      theme.bottomNavigationBarTheme.backgroundColor!,
-                  foregroundColor: theme.textTheme.bodyMedium!.color!,
-                  tabbarSelectedForegroundColor: theme.cardColor,
-                  tabbarSelectedBackgroundColor: theme.primaryColor,
-                  itemOutlineColor:
-                      theme.bottomNavigationBarTheme.backgroundColor!,
-                  toolbarItems: [
-                    textDecorationMobileToolbarItem,
-                    buildTextAndBackgroundColorMobileToolbarItem(),
-                    blocksMobileToolbarItem,
-                    linkMobileToolbarItem,
-                    dividerMobileToolbarItem,
-                  ],
-                ),
-              ),
               SliverFillRemaining(
-                // 选中内容时的浮动工具条
-                child: FloatingToolbar(
-                  items: [
-                    paragraphItem,
-                    ...headingItems,
-                    ...markdownFormatItems,
-                    quoteItem,
-                    bulletedListItem,
-                    numberedListItem,
-                    linkItem,
-                    buildTextColorItem(),
-                    buildHighlightColorItem(),
-                    ...textDirectionItems,
-                    ...alignmentItems,
-                  ],
-                  // 浮动条的构建
-                  // toolbarBuilder:
-                  //     (context, child, onDismiss, isMetricsChanged) {
-                  //       return Text('data');
-                  //     },
-                  // 每项的构建
-                  tooltipBuilder: (context, _, message, child) {
-                    return Tooltip(
-                      message: message,
-                      preferBelow: true,
-                      child: child,
-                    );
-                  },
-                  editorState: editorState,
-                  textDirection: widget.textDirection,
-                  editorScrollController: curState.editorScrollController,
-                  child: Directionality(
-                    textDirection: widget.textDirection,
-                    child: AppFlowyEditor(
-                      showMagnifier: true, //显示放大镜，only works on iOS or Android.
+                child:
+                    // 选中内容时的浮动工具条
+                    FloatingToolbar(
+                      items: [
+                        paragraphItem,
+                        ...headingItems,
+                        ...markdownFormatItems,
+                        quoteItem,
+                        bulletedListItem,
+                        numberedListItem,
+                        linkItem,
+                        buildTextColorItem(),
+                        buildHighlightColorItem(),
+                        ...textDirectionItems,
+                        ...alignmentItems,
+                      ],
+                      // 浮动条的构建
+                      // toolbarBuilder: MyEditorState.showFloatingToolbar
+                      //     ? null
+                      //     : (_, _, _, _) => SizedBox(),
+                      // 每项的构建
+                      tooltipBuilder: (context, _, message, child) {
+                        return Tooltip(
+                          message: message,
+                          preferBelow: true,
+                          child: child,
+                        );
+                      },
                       editorState: editorState,
+                      textDirection: widget.textDirection,
                       editorScrollController: curState.editorScrollController,
-                      blockComponentBuilders: _buildBlockComponentBuilders(),
-                      characterShortcutEvents: null, // [], // 输入斜杠后弹出的功能
-                      commandShortcutEvents: _logic.getCommandShortcuts(
-                        context,
-                      ),
-                      editorStyle: _buildEditorStyle(),
-                      enableAutoComplete: true, // 自动完成，类似ai代码提示
-                      autoCompleteTextProvider: _buildAutoCompleteTextProvider,
-                      dropTargetStyle: const AppFlowyDropTargetStyle(
-                        color: Colors.red,
-                      ),
-                      footer: _buildFooter(editorState), // 页脚
+                      child: _buildEditor(editorState, curState, context),
                     ),
-                  ),
-                ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Directionality _buildEditor(
+    EditorState editorState,
+    MyEditorState curState,
+    BuildContext context,
+  ) {
+    return Directionality(
+      textDirection: widget.textDirection,
+      child: MouseRegion(
+        onHover: _logic.showFloatingToolbar,
+        child: AppFlowyEditor(
+          showMagnifier: true, //显示放大镜，only works on iOS or Android.
+          editorState: editorState,
+          editorScrollController: curState.editorScrollController,
+          blockComponentBuilders: _buildBlockComponentBuilders(),
+          characterShortcutEvents: null, // [], // 输入斜杠后弹出的功能
+          commandShortcutEvents: _logic.getCommandShortcuts(context),
+          editorStyle: _buildEditorStyle(),
+          enableAutoComplete: true, // 自动完成，类似ai代码提示
+          autoCompleteTextProvider: _buildAutoCompleteTextProvider,
+          dropTargetStyle: const AppFlowyDropTargetStyle(color: Colors.red),
+          footer: _buildFooter(editorState), // 页脚
         ),
       ),
     );
@@ -258,67 +275,5 @@ class _EditorViewState extends State<EditorView> {
       }
     });
     return map;
-  }
-}
-
-class HoverMenu extends StatefulWidget {
-  final Widget child;
-  final WidgetBuilder itemBuilder;
-
-  const HoverMenu({super.key, required this.child, required this.itemBuilder});
-
-  @override
-  HoverMenuState createState() => HoverMenuState();
-}
-
-class HoverMenuState extends State<HoverMenu> {
-  OverlayEntry? overlayEntry;
-
-  bool canCancelHover = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.text,
-      hitTestBehavior: HitTestBehavior.opaque,
-      onEnter: (details) {
-        overlayEntry = _createOverlayEntry();
-        Overlay.of(context).insert(overlayEntry!);
-      },
-      onExit: (details) {
-        // delay the removal of the overlay entry to avoid flickering.
-        Future.delayed(const Duration(milliseconds: 100), () {
-          if (canCancelHover) {
-            overlayEntry?.remove();
-          }
-        });
-      },
-      child: widget.child,
-    );
-  }
-
-  OverlayEntry _createOverlayEntry() {
-    final renderBox = context.findRenderObject() as RenderBox;
-    final offset = renderBox.localToGlobal(Offset.zero);
-    final size = renderBox.size;
-
-    return OverlayEntry(
-      maintainState: true,
-      builder: (context) => Positioned(
-        left: offset.dx,
-        top: offset.dy + size.height,
-        child: MouseRegion(
-          cursor: SystemMouseCursors.text,
-          hitTestBehavior: HitTestBehavior.opaque,
-          onEnter: (details) {
-            canCancelHover = false;
-          },
-          onExit: (details) {
-            canCancelHover = true;
-          },
-          child: widget.itemBuilder(context),
-        ),
-      ),
-    );
   }
 }

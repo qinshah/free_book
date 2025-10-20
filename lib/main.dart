@@ -15,7 +15,7 @@ import 'module/root/root_view.dart';
 
 part 'data/theme.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await Storage.i.init();

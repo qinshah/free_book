@@ -7,18 +7,18 @@ import 'root_state.dart';
 class RootLogic extends ViewLogic<RootState> {
   RootLogic(super.curState);
 
-  void changePage(int index, PageController pageCntlr) {
+  Future<void> changePage(int index, PageController pageCntlr) async {
+    await pageCntlr.animateToPage(
+      index,
+      duration: Durations.medium1,
+      curve: Curves.ease,
+    );
     final curIndex = curState.pageIndex;
     if (curIndex != 1 && index == 1) {
       _focusDraftEditor(); // 切到草稿页，聚焦
     } else if (curIndex == 1 && index != 1) {
       _unFocusDraftEditor(); // 切出草稿页，取消聚焦
     }
-    pageCntlr.animateToPage(
-      index,
-      duration: Durations.medium1,
-      curve: Curves.ease,
-    );
     rebuildState(curState..pageIndex = index);
   }
 

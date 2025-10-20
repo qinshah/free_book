@@ -11,7 +11,7 @@ import 'package:free_book/module/home/home_page_logic.dart';
 import 'package:provider/provider.dart';
 
 import 'edit_page_logic.dart';
-import 'editor/editor_view.dart';
+import 'editor/view/editor_view.dart';
 
 class EditPageView extends StatefulWidget {
   const EditPageView(this.initDocPath, {super.key}) : isDraft = false;
@@ -56,6 +56,7 @@ class _EditPageViewState extends State<EditPageView>
               final curState = context.watch<EditPageLogic>().curState;
               return Scaffold(
                 appBar: AppBar(
+                  toolbarHeight: 42,
                   title: SelectableText(curState.docName),
                   // TODO 重构UI
                   actions: [_ToolBar()],
