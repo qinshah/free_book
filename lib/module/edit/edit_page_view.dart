@@ -58,15 +58,18 @@ class _EditPageViewState extends State<EditPageView>
               return Scaffold(
                 appBar: AppBar(
                   // 重写返回按钮
-                  leadingWidth: 32,
                   leading: ModalRoute.of(context)?.canPop ?? false
-                      ? InkButton(
-                          padding: EdgeInsets.zero,
-                          child: Icon(Icons.arrow_back),
-                          onTap: () => Navigator.of(context).pop(),
+                      ? Row(
+                          children: [
+                            SizedBox(width: 8),
+                            InkButton(
+                              child: Icon(Icons.arrow_back),
+                              onTap: () => Navigator.of(context).pop(),
+                            ),
+                          ],
                         )
                       : null,
-                  toolbarHeight: 28,
+                  toolbarHeight: 36,
                   title: SelectableText(curState.docName),
                   // TODO 重构UI
                   actions: [_ToolButtons()],
@@ -92,7 +95,6 @@ class _ToolButtons extends StatelessWidget {
     return Row(
       children: [
         InkButton(
-          padding: const EdgeInsets.all(2),
           onTap: path == null
               ? () => showDialog(
                   context: context,
@@ -113,10 +115,9 @@ class _ToolButtons extends StatelessWidget {
                     context.showToast('保存失败：$e', ToastType.error);
                   }
                 },
-          child: Icon(Icons.save_rounded, size: 20),
+          child: Icon(Icons.save_rounded),
         ),
         InkButton(
-          padding: const EdgeInsets.all(2),
           onTap: () => showDialog(
             context: context,
             builder: (_) => ChangeNotifierProvider.value(
@@ -124,8 +125,9 @@ class _ToolButtons extends StatelessWidget {
               child: _SaveAsDialog(doc),
             ),
           ),
-          child: Icon(Icons.save_as, size: 20),
+          child: Icon(Icons.save_as),
         ),
+        SizedBox(width: 8),
       ],
     );
   }
@@ -173,16 +175,15 @@ class __SaveToDialogState extends State<_SaveToDialog> {
       ],
     );
   }
-  
-  Future<void> _saveTo() async {
 
+  Future<void> _saveTo() async {
     try {
       final error = await Storage.i.checkDocNameError(_name);
       if (error != null) throw Exception(error);
       if (mounted) Navigator.of(context).pop();
       final path = '${Storage.i.docStartPath}$_name.json';
       await _logic.saveDoc(path, widget.doc);
-      _logic.loadDocInfo(path,false);
+      _logic.loadDocInfo(path, false);
       // ignore: use_build_context_synchronously
       final homeLogic = context.read<HomePageLogic>();
       homeLogic.addDocToRecent(path); // 添加到最近文档列表

@@ -159,7 +159,7 @@ class _EditorViewState extends State<EditorView> {
           enableAutoComplete: true, // 自动完成，类似ai代码提示
           autoCompleteTextProvider: _buildAutoCompleteTextProvider,
           dropTargetStyle: const AppFlowyDropTargetStyle(color: Colors.red),
-          footer: _buildFooter(editorState), // 页脚
+          // footer: _buildFooter(editorState), // 页脚
         ),
       ),
     );
@@ -188,25 +188,25 @@ class _EditorViewState extends State<EditorView> {
     );
   }
 
-  Widget _buildFooter(EditorState editorState) {
-    return SizedBox(
-      height: 100,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () async {
-          // check if the document is empty, if so, add a new paragraph block.
-          if (editorState.document.root.children.isEmpty) {
-            final transaction = editorState.transaction;
-            transaction.insertNode([0], paragraphNode());
-            await editorState.apply(transaction);
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              editorState.selection = Selection.collapsed(Position(path: [0]));
-            });
-          }
-        },
-      ),
-    );
-  }
+  // Widget _buildFooter(EditorState editorState) {
+  //   return SizedBox(
+  //     height: 100,
+  //     child: GestureDetector(
+  //       behavior: HitTestBehavior.opaque,
+  //       onTap: () async {
+  //         // check if the document is empty, if so, add a new paragraph block.
+  //         if (editorState.document.root.children.isEmpty) {
+  //           final transaction = editorState.transaction;
+  //           transaction.insertNode([0], paragraphNode());
+  //           await editorState.apply(transaction);
+  //           WidgetsBinding.instance.addPostFrameCallback((_) {
+  //             editorState.selection = Selection.collapsed(Position(path: [0]));
+  //           });
+  //         }
+  //       },
+  //     ),
+  //   );
+  // }
 
   String? _buildAutoCompleteTextProvider(
     BuildContext context,
