@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:appflowy_editor/appflowy_editor.dart';
+import 'package:flutter/material.dart';
 import 'package:free_book/function/state_management.dart';
 
 class MyEditorState extends ViewState {
@@ -12,4 +13,8 @@ class MyEditorState extends ViewState {
   static Timer? floatingToolbarTimer;
 
   static double toolBarHeight = 100;
+
+  StreamSubscription<EditorTransactionValue>? transactionStream;
+
+  static final expansibleCntlr = ExpansibleController();
 }

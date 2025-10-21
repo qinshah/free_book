@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:free_book/function/context_extension.dart';
@@ -8,6 +6,7 @@ import 'package:free_book/module/edit/edit_page_state.dart';
 import 'package:free_book/module/edit/editor/editor_logic.dart';
 import 'package:free_book/module/edit/editor/editor_state.dart';
 import 'package:free_book/module/home/home_page_logic.dart';
+import 'package:free_book/module/root/root_logic.dart';
 import 'package:free_book/widget/ink_button.dart';
 import 'package:provider/provider.dart';
 
@@ -40,6 +39,10 @@ class _EditPageViewState extends State<EditPageView>
   void initState() {
     super.initState();
     // 添加到最近文档列表
+    if (widget.isDraft) {
+      final rootLogic = context.read<RootLogic>();
+      rootLogic.curState.draftLogic = _logic;
+    }
     _logic.addToRecDoc(widget.initDocPath, widget.isDraft, context);
     _logic.loadDocInfo(widget.initDocPath, widget.isDraft);
   }
@@ -55,31 +58,63 @@ class _EditPageViewState extends State<EditPageView>
           child: Builder(
             builder: (context) {
               final curState = context.watch<EditPageLogic>().curState;
-              return Scaffold(
-                appBar: AppBar(
-                  // 重写返回按钮
-                  leading: ModalRoute.of(context)?.canPop ?? false
-                      ? Row(
-                          children: [
-                            SizedBox(width: 8),
-                            InkButton(
-                              child: Icon(Icons.arrow_back),
-                              onTap: () => Navigator.of(context).pop(),
-                            ),
-                          ],
-                        )
-                      : null,
-                  toolbarHeight: 36,
-                  title: SelectableText(curState.docName),
-                  // TODO 重构UI
-                  actions: [_ToolButtons()],
+              return PopScope(
+                canPop: curState.saved,
+                onPopInvokedWithResult: (didPop, _) {
+                  if (didPop) return;
+                  _showConfirmPopDialog(context);
+                },
+                child: Scaffold(
+                  appBar: AppBar(
+                    leadingWidth: 88,
+                    // 重写返回按钮
+                    leading: Row(
+                      children: [
+                        SizedBox(width: 8),
+                        if (ModalRoute.of(context)?.canPop == true)
+                          InkButton(
+                            onTap: () => curState.saved
+                                ? Navigator.of(context).pop()
+                                : _showConfirmPopDialog(context),
+                            child: Icon(Icons.arrow_back),
+                          ),
+                        if (!curState.saved) Text('未保存'),
+                      ],
+                    ),
+                    toolbarHeight: 36,
+                    title: SelectableText(curState.docName, maxLines: 1),
+                    // TODO 重构UI
+                    actions: [_ToolButtons()],
+                  ),
+                  body: EditorView(curState.docPath, isDraft: widget.isDraft),
                 ),
-                body: EditorView(curState.docPath, isDraft: widget.isDraft),
               );
             },
           ),
         );
       },
+    );
+  }
+
+  void _showConfirmPopDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('确定不保存退出？'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('取消'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+            child: Text('确定', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
     );
   }
 }

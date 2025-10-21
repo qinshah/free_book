@@ -5,4 +5,6 @@ class EditPageState extends ViewState {
   final saveAsNameCntlr = TextEditingController();
   String? docPath;
   String docName = '空白文档';
+
+  bool saved = true;
 }

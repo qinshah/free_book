@@ -14,7 +14,6 @@ class ToolBar extends StatefulWidget {
 }
 
 class _ToolBarState extends State<ToolBar> with TickerProviderStateMixin {
-  final _expansibleCntlr = ExpansibleController();
   late final _maxBodyHeight = 0.4 * MediaQuery.of(context).size.height;
   late final _tabCntlr = TabController(
     length: _Tools.values.length,
@@ -24,8 +23,10 @@ class _ToolBarState extends State<ToolBar> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return MouseRegion(
-      onEnter: (_) => _expansibleCntlr.expand(),
-      onExit: kDebugMode ? null : (_) => _expansibleCntlr.collapse(),
+      onEnter: (_) => MyEditorState.expansibleCntlr.expand(),
+      onExit: kDebugMode
+          ? null
+          : (_) => MyEditorState.expansibleCntlr.collapse(),
       child: ExpansionTile(
         showTrailingIcon: false,
         backgroundColor: theme.bottomNavigationBarTheme.backgroundColor,
@@ -33,7 +34,7 @@ class _ToolBarState extends State<ToolBar> with TickerProviderStateMixin {
             theme.bottomNavigationBarTheme.backgroundColor,
         collapsedShape: const Border(),
         shape: const Border(),
-        controller: _expansibleCntlr,
+        controller: MyEditorState.expansibleCntlr,
         tilePadding: EdgeInsets.zero,
         childrenPadding: EdgeInsets.zero,
         title: ColoredBox(
@@ -47,11 +48,11 @@ class _ToolBarState extends State<ToolBar> with TickerProviderStateMixin {
             overlayColor: WidgetStateProperty.all(Colors.transparent),
             onTap: (_) {
               if (_tabCntlr.offset == 0) {
-                _expansibleCntlr.isExpanded
-                    ? _expansibleCntlr.collapse()
-                    : _expansibleCntlr.expand();
+                MyEditorState.expansibleCntlr.isExpanded
+                    ? MyEditorState.expansibleCntlr.collapse()
+                    : MyEditorState.expansibleCntlr.expand();
               } else {
-                _expansibleCntlr.expand();
+                MyEditorState.expansibleCntlr.expand();
               }
             },
           ),

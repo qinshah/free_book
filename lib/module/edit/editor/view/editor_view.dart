@@ -146,21 +146,19 @@ class _EditorViewState extends State<EditorView> {
   ) {
     return Directionality(
       textDirection: widget.textDirection,
-      child: MouseRegion(
-        onHover: _logic.showFloatingToolbar,
-        child: AppFlowyEditor(
-          showMagnifier: true, //显示放大镜，only works on iOS or Android.
-          editorState: editorState,
-          editorScrollController: curState.editorScrollController,
-          blockComponentBuilders: _buildBlockComponentBuilders(),
-          characterShortcutEvents: null, // [], // 输入斜杠后弹出的功能
-          commandShortcutEvents: _logic.getCommandShortcuts(context),
-          editorStyle: _buildEditorStyle(),
-          enableAutoComplete: true, // 自动完成，类似ai代码提示
-          autoCompleteTextProvider: _buildAutoCompleteTextProvider,
-          dropTargetStyle: const AppFlowyDropTargetStyle(color: Colors.red),
-          // footer: _buildFooter(editorState), // 页脚
-        ),
+      child: AppFlowyEditor(
+        autoFocus: widget.docPath == null,
+        showMagnifier: true, //显示放大镜，only works on iOS or Android.
+        editorState: editorState,
+        editorScrollController: curState.editorScrollController,
+        blockComponentBuilders: _buildBlockComponentBuilders(),
+        characterShortcutEvents: null, // [], // 输入斜杠后弹出的功能
+        commandShortcutEvents: _logic.getCommandShortcuts(context),
+        editorStyle: _buildEditorStyle(),
+        enableAutoComplete: true, // 自动完成，类似ai代码提示
+        autoCompleteTextProvider: _buildAutoCompleteTextProvider,
+        dropTargetStyle: const AppFlowyDropTargetStyle(color: Colors.red),
+        // footer: _buildFooter(editorState), // 页脚
       ),
     );
   }

@@ -64,7 +64,7 @@ class _RootViewState extends State<RootView> {
               selectedIndex: curPageIndex,
               labelType: NavigationRailLabelType.all,
               onDestinationSelected: (index) =>
-                  _logic.changePage(index, _pageViewCntlr),
+                  _logic.changePage(index, _pageViewCntlr, context),
               destinations: _pages.map((item) {
                 return NavigationRailDestination(
                   icon: item.icon,
@@ -91,9 +91,8 @@ class _RootViewState extends State<RootView> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: BottomNavigationBar(
-            
             currentIndex: curPageIndex,
-            onTap: (index) => _logic.changePage(index, _pageViewCntlr),
+            onTap: (index) => _logic.changePage(index, _pageViewCntlr, context),
             items: _pages.map((page) {
               return BottomNavigationBarItem(icon: page.icon, label: page.name);
             }).toList(),

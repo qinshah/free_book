@@ -50,6 +50,7 @@ class EditPageLogic extends ViewLogic<EditPageState> {
 
   Future<void> saveDoc(String path, Document doc) async {
     await File(path).writeAsString(jsonEncode(doc.toJson()));
+    rebuildState(curState..saved = true);
   }
 
   void addToRecDoc(String? path, bool isDraft, BuildContext context) {
@@ -57,5 +58,9 @@ class EditPageLogic extends ViewLogic<EditPageState> {
     if (isDraft || path == null || path.startsWith('assets')) return;
     final homePageLogic = context.read<HomePageLogic>();
     homePageLogic.addDocToRecent(path);
+  }
+
+  void onDocChange(_) {
+    if (curState.saved) rebuildState(curState..saved = false);
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:free_book/function/context_extension.dart';
 import 'package:free_book/function/state_management.dart';
+import 'package:free_book/module/edit/edit_page_logic.dart';
 import 'package:free_book/module/root/root_logic.dart';
 import 'package:provider/provider.dart';
 
@@ -20,11 +21,16 @@ class EditorLogic extends ViewLogic<MyEditorState> {
     BuildContext context,
     bool isDraft,
   ) async {
-    EditorState editorState = await _loadEditor(docPath, context);
+    final editPageLogic = context.read<EditPageLogic>();
+    EditorState editorState = await _loadEditorState(docPath, context);
     // 日志
     editorState.logConfiguration
       ..handler = debugPrint
       ..level = AppFlowyEditorLogLevel.off;
+    curState.transactionStream?.cancel();
+    curState.transactionStream = editorState.transactionStream.listen(
+      editPageLogic.onDocChange,
+    );
     curState.editorScrollController = EditorScrollController(
       editorState: editorState,
     );
@@ -32,13 +38,16 @@ class EditorLogic extends ViewLogic<MyEditorState> {
       // 更新草稿编辑器对象
       // ignore: use_build_context_synchronously
       final rootLogic = context.read<RootLogic>();
-      rootLogic.curState.draftEditorState = editorState;
+      rootLogic.curState.draftState = editorState;
     }
     rebuildState(curState..editorState = editorState);
   }
 
-  Future<EditorState> _loadEditor(String? docPath, BuildContext context) async {
-    if (docPath == null) return EditorState(document: Document.blank());
+  Future<EditorState> _loadEditorState(
+    String? docPath,
+    BuildContext context,
+  ) async {
+    if (docPath == null) return await _loadEmptyEditorState();
     try {
       if (docPath.startsWith('assets')) {
         final json = jsonDecode(await rootBundle.loadString(docPath));
@@ -49,8 +58,16 @@ class EditorLogic extends ViewLogic<MyEditorState> {
       }
     } catch (e) {
       context.showToast('文档打开失败，路径\n：$docPath:\n$e', ToastType.warn);
-      return EditorState(document: Document.blank());
+      return await _loadEmptyEditorState();
     }
+  }
+
+  Future<EditorState> _loadEmptyEditorState() async {
+    final editorState = EditorState(document: Document.blank());
+    final transaction = editorState.transaction;
+    transaction.insertNode([0], paragraphNode());
+    await editorState.apply(transaction);
+    return editorState;
   }
 
   // 获取快捷键功能，上下文用于查找本地翻译
@@ -68,19 +85,7 @@ class EditorLogic extends ViewLogic<MyEditorState> {
   }
 
   @override
-  void rememberDispose() {}
-
-  void showFloatingToolbar(_) {
-    // TODO
-    // if (!MyEditorState.showFloatingToolbar) {
-    //   MyEditorState.showFloatingToolbar = true;
-    //   rebuildState(curState);
-    // }
-    // MyEditorState.floatingToolbarTimer?.cancel();
-    // // 3秒后隐藏
-    // MyEditorState.floatingToolbarTimer = Timer(const Duration(seconds: 3), () {
-    //   MyEditorState.showFloatingToolbar = false;
-    //   rebuildState(curState);
-    // });
+  void rememberDispose() {
+    curState.transactionStream?.cancel();
   }
 }
