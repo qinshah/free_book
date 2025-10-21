@@ -67,21 +67,8 @@ class EditorLogic extends ViewLogic<MyEditorState> {
     ];
   }
 
-  bool onPanStart(DragStartDetails details) {
-    print(details);
-    print(details.kind);
-    return true;
-  }
-
   @override
-  void rememberDispose() {
-    // TODO 设置key
-    curState.editorState?.service.selectionService.unregisterGestureInterceptor(
-      'test',
-    );
-    // curState.editorScrollController.dispose();
-    // curState.editorState?.dispose();
-  }
+  void rememberDispose() {}
 
   void showFloatingToolbar(_) {
     // TODO

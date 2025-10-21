@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:free_book/module/edit/editor/drag_to_reorder_editor.dart';
 import 'package:free_book/module/edit/editor/editor_state.dart';
 import 'package:free_book/module/edit/editor/view/tool_bar.dart';
@@ -42,102 +41,101 @@ class _EditorViewState extends State<EditorView> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    // final theme = Theme.of(context);
     final curState = context.watch<EditorLogic>().curState;
     final editorState = curState.editorState;
     if (editorState == null) {
       return Center(child: CircularProgressIndicator());
     }
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: ColoredBox(
-          color: theme.cardColor,
-          child: CustomScrollView(
-            scrollBehavior: ScrollConfiguration.of(
-              context,
-            ).copyWith(scrollbars: false),
-            physics: const NeverScrollableScrollPhysics(),
-            slivers: [
-              // if (kDebugMode)
-              //   SliverToBoxAdapter(
-              //     child: TextButton(
-              //       onPressed: () {
-              //         // editorState.selectionService.onPanUpdate(details, mode)
-              //         // SelectionMenu(
-              //         //   context: context,
-              //         //   editorState: editorState,
-              //         //   selectionMenuItems: standardSelectionMenuItems,
-              //         //   deleteSlashByDefault: false,
-              //         //   singleColumn: true,
-              //         // ).show();
-              //       },
-              //       child: Text('测试'),
-              //     ),
-              //   ),
-              // 工具栏
-              SliverToBoxAdapter(child: ToolBar()),
-              // SliverToBoxAdapter(
-              //   // 工具条
-              //   child: MobileToolbar(
-              //     editorState: editorState,
-              //     toolbarHeight: 38,
-              //     backgroundColor:
-              //         theme.bottomNavigationBarTheme.backgroundColor!,
-              //     foregroundColor: theme.textTheme.bodyMedium!.color!,
-              //     tabbarSelectedForegroundColor: theme.cardColor,
-              //     tabbarSelectedBackgroundColor: theme.primaryColor,
-              //     itemOutlineColor:
-              //         theme.bottomNavigationBarTheme.backgroundColor!,
-              //     toolbarItems: [
-              //       textDecorationMobileToolbarItem,
-              //       buildTextAndBackgroundColorMobileToolbarItem(),
-              //       blocksMobileToolbarItem,
-              //       linkMobileToolbarItem,
-              //       dividerMobileToolbarItem,
-              //     ],
-              //   ),
-              // ),
-              SliverFillRemaining(
-                child:
-                    // 选中内容时的浮动工具条
-                    FloatingToolbar(
-                      items: [
-                        paragraphItem,
-                        ...headingItems,
-                        ...markdownFormatItems,
-                        quoteItem,
-                        bulletedListItem,
-                        numberedListItem,
-                        linkItem,
-                        buildTextColorItem(),
-                        buildHighlightColorItem(),
-                        ...textDirectionItems,
-                        ...alignmentItems,
-                      ],
-                      // 浮动条的构建
-                      // toolbarBuilder: MyEditorState.showFloatingToolbar
-                      //     ? null
-                      //     : (_, _, _, _) => SizedBox(),
-                      // 每项的构建
-                      tooltipBuilder: (context, _, message, child) {
-                        return Tooltip(
-                          message: message,
-                          preferBelow: true,
-                          child: child,
-                        );
-                      },
-                      editorState: editorState,
-                      textDirection: widget.textDirection,
-                      editorScrollController: curState.editorScrollController,
-                      child: _buildEditor(editorState, curState, context),
-                    ),
-              ),
-            ],
+    return CustomScrollView(
+      scrollBehavior: ScrollConfiguration.of(
+        context,
+      ).copyWith(scrollbars: false),
+      physics: const NeverScrollableScrollPhysics(),
+      slivers: [
+        // if (kDebugMode)
+        //   SliverToBoxAdapter(
+        //     child: TextButton(
+        //       onPressed: () {
+        //         // editorState.selectionService.onPanUpdate(details, mode)
+        //         // SelectionMenu(
+        //         //   context: context,
+        //         //   editorState: editorState,
+        //         //   selectionMenuItems: standardSelectionMenuItems,
+        //         //   deleteSlashByDefault: false,
+        //         //   singleColumn: true,
+        //         // ).show();
+        //       },
+        //       child: Text('测试'),
+        //     ),
+        //   ),
+        // 工具栏
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: ToolBar(),
+            ),
           ),
         ),
-      ),
+        // SliverToBoxAdapter(
+        //   // 工具条
+        //   child: MobileToolbar(
+        //     editorState: editorState,
+        //     toolbarHeight: 38,
+        //     backgroundColor:
+        //         theme.bottomNavigationBarTheme.backgroundColor!,
+        //     foregroundColor: theme.textTheme.bodyMedium!.color!,
+        //     tabbarSelectedForegroundColor: theme.cardColor,
+        //     tabbarSelectedBackgroundColor: theme.primaryColor,
+        //     itemOutlineColor:
+        //         theme.bottomNavigationBarTheme.backgroundColor!,
+        //     toolbarItems: [
+        //       textDecorationMobileToolbarItem,
+        //       buildTextAndBackgroundColorMobileToolbarItem(),
+        //       blocksMobileToolbarItem,
+        //       linkMobileToolbarItem,
+        //       dividerMobileToolbarItem,
+        //     ],
+        //   ),
+        // ),
+        SliverFillRemaining(
+          child:
+              // 选中内容时的浮动工具条
+              FloatingToolbar(
+                items: [
+                  paragraphItem,
+                  ...headingItems,
+                  ...markdownFormatItems,
+                  quoteItem,
+                  bulletedListItem,
+                  numberedListItem,
+                  linkItem,
+                  buildTextColorItem(),
+                  buildHighlightColorItem(),
+                  ...textDirectionItems,
+                  ...alignmentItems,
+                ],
+                // 浮动条的构建
+                // toolbarBuilder: MyEditorState.showFloatingToolbar
+                //     ? null
+                //     : (_, _, _, _) => SizedBox(),
+                // 每项的构建
+                tooltipBuilder: (context, _, message, child) {
+                  return Tooltip(
+                    message: message,
+                    preferBelow: true,
+                    child: child,
+                  );
+                },
+                editorState: editorState,
+                textDirection: widget.textDirection,
+                editorScrollController: curState.editorScrollController,
+                child: _buildEditor(editorState, curState, context),
+              ),
+        ),
+      ],
     );
   }
 

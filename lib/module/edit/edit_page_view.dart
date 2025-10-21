@@ -8,6 +8,7 @@ import 'package:free_book/module/edit/edit_page_state.dart';
 import 'package:free_book/module/edit/editor/editor_logic.dart';
 import 'package:free_book/module/edit/editor/editor_state.dart';
 import 'package:free_book/module/home/home_page_logic.dart';
+import 'package:free_book/widget/ink_button.dart';
 import 'package:provider/provider.dart';
 
 import 'edit_page_logic.dart';
@@ -56,10 +57,19 @@ class _EditPageViewState extends State<EditPageView>
               final curState = context.watch<EditPageLogic>().curState;
               return Scaffold(
                 appBar: AppBar(
-                  toolbarHeight: 42,
+                  // 重写返回按钮
+                  leadingWidth: 32,
+                  leading: ModalRoute.of(context)?.canPop ?? false
+                      ? InkButton(
+                        padding: EdgeInsets.zero,
+                          child: Icon(Icons.arrow_back),
+                          onTap: () => Navigator.of(context).pop(),
+                        )
+                      : null,
+                  toolbarHeight: 28,
                   title: SelectableText(curState.docName),
                   // TODO 重构UI
-                  actions: [_ToolBar()],
+                  actions: [_ToolButtons()],
                 ),
                 body: EditorView(curState.docPath, isDraft: widget.isDraft),
               );
@@ -71,8 +81,8 @@ class _EditPageViewState extends State<EditPageView>
   }
 }
 
-class _ToolBar extends StatelessWidget {
-  const _ToolBar();
+class _ToolButtons extends StatelessWidget {
+  const _ToolButtons();
   @override
   Widget build(BuildContext context) {
     final logic = context.watch<EditPageLogic>();
@@ -81,9 +91,9 @@ class _ToolBar extends StatelessWidget {
     final path = curState.docPath;
     return Row(
       children: [
-        IconButton(
-          icon: Icon(Icons.save_rounded),
-          onPressed: path == null || path.startsWith('assets') || doc == null
+        InkButton(
+          padding: const EdgeInsets.all(2),
+          onTap: path == null || path.startsWith('assets') || doc == null
               ? null
               : () async {
                   try {
@@ -95,10 +105,11 @@ class _ToolBar extends StatelessWidget {
                     context.showToast('保存失败：$e', ToastType.error);
                   }
                 },
+          child: Icon(Icons.save_rounded, size: 20),
         ),
-        IconButton(
-          icon: Icon(Icons.save_as),
-          onPressed: doc == null
+        InkButton(
+          padding: const EdgeInsets.all(2),
+          onTap: doc == null
               ? null
               : () => showAdaptiveDialog(
                   context: context,
@@ -109,6 +120,7 @@ class _ToolBar extends StatelessWidget {
                     );
                   },
                 ),
+          child: Icon(Icons.save_as, size: 20),
         ),
       ],
     );
