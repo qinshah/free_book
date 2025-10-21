@@ -11,5 +11,5 @@ class MyEditorState extends ViewState {
 
   static Timer? floatingToolbarTimer;
 
-  static double toolBarHeight = 200;
+  static double toolBarHeight = 100;
 }

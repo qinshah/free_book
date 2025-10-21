@@ -124,22 +124,27 @@ class _TypeItem {
 
 class _ContentTypeState extends State<_ContentType> {
   final _items = [
-    _TypeItem('标题1', 'heading', FIcons.heading1, 1),
-    _TypeItem('标题2', 'heading', FIcons.heading2, 2),
-    _TypeItem('标题3', 'heading', FIcons.heading3, 3),
+    _TypeItem('标题1', HeadingBlockKeys.type, FIcons.heading1, 1),
+    _TypeItem('标题2', HeadingBlockKeys.type, FIcons.heading2, 2),
+    _TypeItem('标题3', HeadingBlockKeys.type, FIcons.heading3, 3),
+    _TypeItem('无序列表', BulletedListBlockKeys.type, FIcons.list),
+    _TypeItem('有序列表', NumberedListBlockKeys.type, FIcons.listOrdered),
+    _TypeItem('复选框', TodoListBlockKeys.type, Icons.check_box_outlined),
+    _TypeItem('引用', QuoteBlockKeys.type, FIcons.quote),
   ];
+  late ThemeData _theme;
 
   @override
   Widget build(BuildContext context) {
+    _theme = Theme.of(context);
     final editorLigic = context.read<EditorLogic>();
     final editorState = editorLigic.curState.editorState!;
     return ValueListenableBuilder<Selection?>(
       valueListenable: editorState.selectionNotifier,
       builder: (context, selection, child) {
         final node = editorState.getNodeAtPath(selection?.start.path ?? [])!;
-        return Padding(
-          padding: const EdgeInsets.all(6),
-          child: SingleChildScrollView(
+        return SingleChildScrollView(
+          child: Center(
             child: Wrap(
               spacing: 2,
               runSpacing: 2,
@@ -147,7 +152,7 @@ class _ContentTypeState extends State<_ContentType> {
                 final isSelected =
                     node.type == item.type &&
                     (item.level == null ||
-                        node.attributes['level'] == item.level);
+                        node.attributes[HeadingBlockKeys.level] == item.level);
                 return _buildItem(item, isSelected, editorState);
               }).toList(),
             ),
@@ -186,12 +191,15 @@ class _ContentTypeState extends State<_ContentType> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(6),
           border: Border.all(
-            color: isSelected ? Colors.blue : Colors.transparent,
+            color: isSelected ? _theme.primaryColor : Colors.transparent,
             width: 2,
           ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        width: 55,
+        height: 55,
+        // padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(item.iconData),
             Text(item.name, style: TextStyle(fontSize: 12)),
