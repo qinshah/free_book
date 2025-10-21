@@ -22,4 +22,21 @@ class Storage {
     docDirPath = (await getApplicationDocumentsDirectory()).path;
     sp = await SharedPreferences.getInstance();
   }
+
+  Future<String?> checkDocNameError(String value) async {
+    if (value.isEmpty) {
+      return '';
+    } else if (value.startsWith(' ')) {
+      return '不能以空格开头';
+    }
+    final file = File('${Storage.i.docStartPath}$value.json');
+    try {
+      if (await file.exists()) {
+        return '已存在同名文件';
+      }
+      return null;
+    } catch (e) {
+      return e.toString();
+    }
+  }
 }

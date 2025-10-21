@@ -61,7 +61,7 @@ class _EditPageViewState extends State<EditPageView>
                   leadingWidth: 32,
                   leading: ModalRoute.of(context)?.canPop ?? false
                       ? InkButton(
-                        padding: EdgeInsets.zero,
+                          padding: EdgeInsets.zero,
                           child: Icon(Icons.arrow_back),
                           onTap: () => Navigator.of(context).pop(),
                         )
@@ -86,14 +86,22 @@ class _ToolButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final logic = context.watch<EditPageLogic>();
-    final curState = logic.curState;
+    final path = logic.curState.docPath;
     final doc = context.watch<EditorLogic>().curState.editorState?.document;
-    final path = curState.docPath;
+    if (doc == null) return const SizedBox();
     return Row(
       children: [
         InkButton(
           padding: const EdgeInsets.all(2),
-          onTap: path == null || path.startsWith('assets') || doc == null
+          onTap: path == null
+              ? () => showDialog(
+                  context: context,
+                  builder: (_) => ChangeNotifierProvider.value(
+                    value: logic,
+                    child: _SaveToDialog(doc),
+                  ),
+                )
+              : path.startsWith('asset')
               ? null
               : () async {
                   try {
@@ -109,21 +117,81 @@ class _ToolButtons extends StatelessWidget {
         ),
         InkButton(
           padding: const EdgeInsets.all(2),
-          onTap: doc == null
-              ? null
-              : () => showAdaptiveDialog(
-                  context: context,
-                  builder: (_) {
-                    return ChangeNotifierProvider.value(
-                      value: logic,
-                      child: _SaveAsDialog(doc),
-                    );
-                  },
-                ),
+          onTap: () => showDialog(
+            context: context,
+            builder: (_) => ChangeNotifierProvider.value(
+              value: logic,
+              child: _SaveAsDialog(doc),
+            ),
+          ),
           child: Icon(Icons.save_as, size: 20),
         ),
       ],
     );
+  }
+}
+
+class _SaveToDialog extends StatefulWidget {
+  const _SaveToDialog(this.doc);
+
+  final Document doc;
+
+  @override
+  State<_SaveToDialog> createState() => __SaveToDialogState();
+}
+
+class __SaveToDialogState extends State<_SaveToDialog> {
+  late final _logic = context.read<EditPageLogic>();
+  String? _error = '';
+  String _name = '';
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('保存到'),
+      content: TextField(
+        autofocus: true,
+        onChanged: (value) async {
+          _name = value;
+          final error = await Storage.i.checkDocNameError(value);
+          setState(() => _error = error);
+        },
+        onSubmitted: _error == null ? (_) => _saveTo() : null,
+        decoration: InputDecoration(
+          hintText: '输入文档名称',
+          errorText: _error == null || _error!.isEmpty ? null : _error,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text('取消'),
+        ),
+        TextButton(
+          onPressed: _error == null ? _saveTo : null,
+          child: Text('确定'),
+        ),
+      ],
+    );
+  }
+  
+  Future<void> _saveTo() async {
+
+    try {
+      final error = await Storage.i.checkDocNameError(_name);
+      if (error != null) throw Exception(error);
+      if (mounted) Navigator.of(context).pop();
+      final path = '${Storage.i.docStartPath}$_name.json';
+      await _logic.saveDoc(path, widget.doc);
+      _logic.loadDocInfo(path,false);
+      // ignore: use_build_context_synchronously
+      final homeLogic = context.read<HomePageLogic>();
+      homeLogic.addDocToRecent(path); // 添加到最近文档列表
+      // ignore: use_build_context_synchronously
+      context.showToast('保存成功', ToastType.success);
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      context.showToast('保存失败$e', ToastType.error);
+    }
   }
 }
 
@@ -138,12 +206,12 @@ class _SaveAsDialog extends StatefulWidget {
 class _SaveAsDialogState extends State<_SaveAsDialog> {
   late final _logic = context.read<EditPageLogic>();
   String? _error = '';
-  late File _targetFile;
-
   @override
   void initState() {
     super.initState();
-    _checkNameError(_logic.curState.saveAsNameCntlr.text).then((error) {
+    Storage.i.checkDocNameError(_logic.curState.saveAsNameCntlr.text).then((
+      error,
+    ) {
       setState(() => _error = error);
     });
   }
@@ -156,7 +224,7 @@ class _SaveAsDialogState extends State<_SaveAsDialog> {
         autofocus: true,
         controller: _logic.curState.saveAsNameCntlr,
         onChanged: (value) async {
-          final error = await _checkNameError(value);
+          final error = await Storage.i.checkDocNameError(value);
           setState(() => _error = error);
         },
         onSubmitted: _error == null ? (_) => _saveAs() : null,
@@ -180,10 +248,16 @@ class _SaveAsDialogState extends State<_SaveAsDialog> {
 
   void _saveAs() async {
     try {
-      await _logic.saveDoc((await _targetFile.create()).path, widget.doc);
+      final error = await Storage.i.checkDocNameError(
+        _logic.curState.saveAsNameCntlr.text,
+      );
+      if (error != null) throw Exception(error);
+      final name = _logic.curState.saveAsNameCntlr.text;
+      final path = '${Storage.i.docStartPath}$name.json';
+      await _logic.saveDoc(path, widget.doc);
       // ignore: use_build_context_synchronously
       final homeLogic = context.read<HomePageLogic>();
-      homeLogic.addDocToRecent(_targetFile.path); // 添加到最近文档列表
+      homeLogic.addDocToRecent(path); // 添加到最近文档列表
       if (!mounted) return;
       Navigator.of(context).pop();
       showDialog(context: context, builder: _buildOpenNewPageDialog);
@@ -192,27 +266,10 @@ class _SaveAsDialogState extends State<_SaveAsDialog> {
     }
   }
 
-  Future<String?> _checkNameError(String value) async {
-    if (value.isEmpty) {
-      return '';
-    } else if (value.startsWith(' ')) {
-      return '不能以空格开头';
-    }
-    final file = File('${Storage.i.docStartPath}$value.json');
-    try {
-      if (await file.exists()) {
-        return '已存在同名文件';
-      }
-      _targetFile = file;
-      return null;
-    } catch (e) {
-      return e.toString();
-    }
-  }
-
   Widget _buildOpenNewPageDialog(BuildContext context) {
     final theme = Theme.of(context);
     final fileName = _logic.curState.saveAsNameCntlr.text;
+    final path = '${Storage.i.docStartPath}$fileName.json';
     return AlertDialog(
       title: Text('已另存，是否打开？'),
       content: Column(
@@ -232,11 +289,9 @@ class _SaveAsDialogState extends State<_SaveAsDialog> {
           child: Text('打开'),
           onPressed: () {
             Navigator.of(context).pop();
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => EditPageView(_targetFile.path),
-              ),
-            );
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (context) => EditPageView(path)));
           },
         ),
       ],

@@ -87,10 +87,11 @@ class _RootViewState extends State<RootView> {
       body: _buildPage(Axis.horizontal),
       extendBody: true,
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: BottomNavigationBar(
+            
             currentIndex: curPageIndex,
             onTap: (index) => _logic.changePage(index, _pageViewCntlr),
             items: _pages.map((page) {

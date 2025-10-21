@@ -30,6 +30,23 @@ class _HomePageViewState extends State<HomePageView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('自由记')),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => EditPageView.newDoc(),
+                ),
+              );
+              _logic.loadDocList();
+            },
+            child: Icon(Icons.add),
+          ),
+          SizedBox(height: 56),
+        ],
+      ),
       body: Builder(
         builder: (context) {
           final curState = context.watch<HomePageLogic>().curState;
@@ -293,7 +310,7 @@ class _RenameDialogState extends State<_RenameDialog> {
         autofocus: true,
         onChanged: (value) async {
           _name = value;
-          final error = await _checkNameError(value);
+          final error = await Storage.i.checkDocNameError(value);
           setState(() => _error = error);
         },
         onSubmitted: _error == null ? (_) => _rename() : null,
@@ -316,8 +333,9 @@ class _RenameDialogState extends State<_RenameDialog> {
   }
 
   void _rename() async {
-    if (await _checkNameError(_name) != null) return;
     try {
+      final error = await Storage.i.checkDocNameError(_name);
+      if (error != null) throw Exception(error);
       if (mounted) Navigator.of(context).pop();
       await _logic.renameDoc(widget.path, _name);
       _logic.loadDocList();
@@ -326,23 +344,6 @@ class _RenameDialogState extends State<_RenameDialog> {
     } catch (e) {
       // ignore: use_build_context_synchronously
       context.showToast('重命名失败$e', ToastType.error);
-    }
-  }
-
-  Future<String?> _checkNameError(String value) async {
-    if (value.isEmpty) {
-      return '';
-    } else if (value.startsWith(' ')) {
-      return '不能以空格开头';
-    }
-    final file = File('${Storage.i.docStartPath}$value.json');
-    try {
-      if (await file.exists()) {
-        return '已存在同名文件';
-      }
-      return null;
-    } catch (e) {
-      return e.toString();
     }
   }
 }
