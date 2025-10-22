@@ -58,7 +58,8 @@ class EditPageLogic extends ViewLogic<EditPageState> {
     homePageLogic.addDocToRecent(path);
   }
 
-  void onDocChange(_) {
+  void onDocChange((TransactionTime, Transaction, ApplyOptions) event) {
+    print('文档改变: ${event.$2.reason}');
     if (curState.saved) rebuildState(curState..saved = false);
   }
 }

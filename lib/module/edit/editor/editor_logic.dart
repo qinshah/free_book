@@ -27,8 +27,8 @@ class EditorLogic extends ViewLogic<MyEditorState> {
     editorState.logConfiguration
       ..handler = debugPrint
       ..level = AppFlowyEditorLogLevel.off;
-    curState.transactionStream?.cancel();
-    curState.transactionStream = editorState.transactionStream.listen(
+    curState.transactionSubscription?.cancel();
+    curState.transactionSubscription = editorState.transactionStream.listen(
       editPageLogic.onDocChange,
     );
     curState.editorScrollController = EditorScrollController(
@@ -86,6 +86,6 @@ class EditorLogic extends ViewLogic<MyEditorState> {
 
   @override
   void rememberDispose() {
-    curState.transactionStream?.cancel();
+    curState.transactionSubscription?.cancel();
   }
 }

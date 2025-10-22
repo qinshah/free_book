@@ -14,7 +14,7 @@ class MyEditorState extends ViewState {
 
   static double toolBarHeight = 152;
 
-  StreamSubscription<EditorTransactionValue>? transactionStream;
+  StreamSubscription<EditorTransactionValue>? transactionSubscription;
 
   static final expansibleCntlr = ExpansibleController();
 }
