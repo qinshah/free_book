@@ -1,15 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-enum ToastType { success, info, warn, error }
+enum ToastType { success, info, warning, error }
 
 extension ContextExtension on BuildContext {
-  void showToast(String message, [ToastType type = ToastType.success]) {
+  Future<void> showToast(
+    String message, {
+    Duration duration = const Duration(seconds: 1),
+  }) => _showToast(message, type: ToastType.info, duration: duration);
+  Future<void> showSuccessToast(
+    String message, {
+    Duration duration = const Duration(seconds: 1),
+  }) => _showToast(message, type: ToastType.success, duration: duration);
+  Future<void> showErrorToast(
+    String message, {
+    Duration duration = const Duration(seconds: 1),
+  }) => _showToast(message, type: ToastType.error, duration: duration);
+  Future<void> showWarningToast(
+    String message, {
+    Duration duration = const Duration(seconds: 1),
+  }) => _showToast(message, type: ToastType.warning, duration: duration);
+
+  Future<void> _showToast(
+    String message, {
+    required ToastType type,
+    required Duration duration,
+  }) async {
     final toast = FToast();
     toast.init(this);
     toast.removeCustomToast();
     toast.showToast(
-      toastDuration: Duration(milliseconds: 1666),
+      toastDuration: duration,
       child: Card(
         color: Theme.of(this).scaffoldBackgroundColor,
         child: Padding(
@@ -23,11 +44,11 @@ extension ContextExtension on BuildContext {
                     Icons.check_circle_outline,
                     color: Colors.green,
                   ),
-                  ToastType.info => const Icon(
+                  ToastType.info =>  Icon(
                     Icons.info_outline,
-                    color: Colors.blue,
+                    color: Theme.of(this).primaryColor,
                   ),
-                  ToastType.warn => const Icon(
+                  ToastType.warning => const Icon(
                     Icons.warning_amber_rounded,
                     color: Colors.yellow,
                   ),
@@ -44,5 +65,6 @@ extension ContextExtension on BuildContext {
         ),
       ),
     );
+    await Future.delayed(duration); // 用于等待toast消失
   }
 }

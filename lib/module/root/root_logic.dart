@@ -23,7 +23,7 @@ class RootLogic extends ViewLogic<RootState> {
         curState.draftState!.document,
       );
       // ignore: use_build_context_synchronously
-      context.showToast('草稿已自动保存');
+      context.showToast('草稿更改已自动保存');
     }
     await pageCntlr.animateToPage(
       index,

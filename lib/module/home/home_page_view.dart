@@ -194,10 +194,10 @@ class _DocItemState extends State<_DocItem> {
         try {
           await _logic.moveDocToTrash(widget.docPath);
           // ignore: use_build_context_synchronously
-          context.showToast('已移到回收站', ToastType.success);
+          context.showSuccessToast('已移到回收站');
         } catch (e) {
           // ignore: use_build_context_synchronously
-          context.showToast('移动失败：$e', ToastType.error);
+          context.showErrorToast('移动失败：$e');
         }
       },
     ),
@@ -228,7 +228,7 @@ class _DocItemState extends State<_DocItem> {
           ? InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () async {
-                context.showToast('文档不存在，已自动移除', ToastType.warn);
+                context.showWarningToast('文档不存在，已自动移除');
                 await _logic.removeRecentDoc(widget.docPath);
                 _logic.loadDocList();
               },
@@ -273,8 +273,8 @@ class _DocItemState extends State<_DocItem> {
 
   Future<void> _openDoc(BuildContext context) async {
     // 还是再确认一下是否在打开前文件被删除了
-    if (!_file.existsSync()) {
-      context.showToast('文档源文件已丢失，打开失败', ToastType.error);
+    if (!_file.existsSync()) {  
+      context.showErrorToast('文档源文件已丢失，打开失败');
       _logic.loadDocList(); // 只需要重新加载列表，不存在的自动变灰
       return;
     }
@@ -340,10 +340,10 @@ class _RenameDialogState extends State<_RenameDialog> {
       await _logic.renameDoc(widget.path, _name);
       _logic.loadDocList();
       // ignore: use_build_context_synchronously
-      context.showToast('重命名成功', ToastType.success);
+      context.showSuccessToast('重命名成功');
     } catch (e) {
       // ignore: use_build_context_synchronously
-      context.showToast('重命名失败$e', ToastType.error);
+      context.showErrorToast('重命名失败$e');
     }
   }
 }
@@ -370,10 +370,10 @@ class _DeleteDialog extends StatelessWidget {
               final logic = context.read<HomePageLogic>();
               await logic.deleteDoc(docPath);
               // ignore: use_build_context_synchronously
-              context.showToast('删除成功', ToastType.success);
+              context.showSuccessToast('删除成功');
             } catch (e) {
               // ignore: use_build_context_synchronously
-              context.showToast('删除失败：$e', ToastType.error);
+              context.showErrorToast('删除失败：$e');
             }
           },
           child: Text('删除', style: TextStyle(color: Colors.red)),

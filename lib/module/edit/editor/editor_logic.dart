@@ -57,7 +57,7 @@ class EditorLogic extends ViewLogic<MyEditorState> {
         return EditorState(document: Document.fromJson(json));
       }
     } catch (e) {
-      context.showToast('文档打开失败，自动创建空文档\n$e', ToastType.warn);
+      context.showWarningToast('文档打开失败，自动创建空文档\n$e');
       return await _loadEmptyEditorState();
     }
   }

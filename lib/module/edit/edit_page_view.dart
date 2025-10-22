@@ -61,7 +61,7 @@ class _EditPageViewState extends State<EditPageView>
               return PopScope(
                 canPop: curState.saved || widget.isDraft,
                 onPopInvokedWithResult: (didPop, _) {
-                  if (didPop) return;
+                  if (didPop || widget.isDraft) return;
                   _showConfirmPopDialog(context);
                 },
                 child: Scaffold(
@@ -144,10 +144,10 @@ class _ToolButtons extends StatelessWidget {
                   try {
                     await logic.saveDoc(path, doc);
                     // ignore: use_build_context_synchronously
-                    context.showToast('保存成功');
+                    context.showSuccessToast('保存成功');
                   } catch (e) {
                     // ignore: use_build_context_synchronously
-                    context.showToast('保存失败：$e', ToastType.error);
+                    context.showErrorToast('保存失败：$e');
                   }
                 },
           child: Icon(Icons.save_rounded),
@@ -223,10 +223,10 @@ class __SaveToDialogState extends State<_SaveToDialog> {
       final homeLogic = context.read<HomePageLogic>();
       homeLogic.addDocToRecent(path); // 添加到最近文档列表
       // ignore: use_build_context_synchronously
-      context.showToast('保存成功', ToastType.success);
+      context.showSuccessToast('保存成功');
     } catch (e) {
       // ignore: use_build_context_synchronously
-      context.showToast('保存失败$e', ToastType.error);
+      context.showErrorToast('保存失败$e');
     }
   }
 }

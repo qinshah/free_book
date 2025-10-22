@@ -77,15 +77,15 @@ class _TrashPageState extends State<TrashPage> {
   Future<void> _restoreFile(File file, BuildContext context) async {
     final newPath = file.path.substring(0, file.path.length - '.trash'.length);
     if (File(newPath).existsSync()) {
-      context.showToast('原位置已存在改文件', ToastType.warn);
+      context.showWarningToast('原位置已存在该文件');
     } else {
       try {
         setState(() {
           file.renameSync(newPath);
         });
-        context.showToast('还原成功');
+        context.showSuccessToast('还原成功');
       } catch (e) {
-        context.showToast('还原失败: $e', ToastType.error);
+        context.showErrorToast('还原失败: $e');
       }
     }
   }
@@ -132,13 +132,13 @@ class _TrashPageState extends State<TrashPage> {
     try {
       await file.delete();
       // ignore: use_build_context_synchronously
-      context.showToast('删除成功');
+      context.showSuccessToast('删除成功');
       setState(() {
         // 刷新列表
       });
     } catch (e) {
       // ignore: use_build_context_synchronously
-      context.showToast('删除失败: $e', ToastType.error);
+      context.showErrorToast('删除失败: $e');
     }
   }
 }
