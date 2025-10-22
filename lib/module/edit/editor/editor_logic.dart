@@ -27,10 +27,13 @@ class EditorLogic extends ViewLogic<MyEditorState> {
     editorState.logConfiguration
       ..handler = debugPrint
       ..level = AppFlowyEditorLogLevel.off;
-    curState.transactionSubscription?.cancel();
-    curState.transactionSubscription = editorState.transactionStream.listen(
-      editPageLogic.onDocChange,
-    );
+    Future.delayed(Duration(seconds: 1), () {
+      // 延迟1秒监听文档改变，解决误监听到一开始加载时的更改
+      curState.transactionSubscription?.cancel();
+      curState.transactionSubscription = editorState.transactionStream.listen(
+        editPageLogic.onDocChange,
+      );
+    });
     curState.editorScrollController = EditorScrollController(
       editorState: editorState,
     );
