@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:free_book/function/device.dart';
 import 'package:free_book/module/edit/editor/drag_to_reorder_editor.dart';
 import 'package:free_book/module/edit/editor/editor_state.dart';
 import 'package:free_book/module/edit/editor/view/tool_bar.dart';
@@ -103,39 +104,41 @@ class _EditorViewState extends State<EditorView> {
         //   ),
         // ),
         SliverFillRemaining(
-          child:
-              // 选中内容时的浮动工具条
-              FloatingToolbar(
-                items: [
-                  paragraphItem,
-                  ...headingItems,
-                  ...markdownFormatItems,
-                  quoteItem,
-                  bulletedListItem,
-                  numberedListItem,
-                  linkItem,
-                  buildTextColorItem(),
-                  buildHighlightColorItem(),
-                  ...textDirectionItems,
-                  ...alignmentItems,
-                ],
-                // 浮动条的构建
-                // toolbarBuilder: MyEditorState.showFloatingToolbar
-                //     ? null
-                //     : (_, _, _, _) => SizedBox(),
-                // 每项的构建
-                tooltipBuilder: (context, _, message, child) {
-                  return Tooltip(
-                    message: message,
-                    preferBelow: true,
-                    child: child,
-                  );
-                },
-                editorState: editorState,
-                textDirection: widget.textDirection,
-                editorScrollController: curState.editorScrollController,
-                child: _buildEditor(editorState, curState, context),
-              ),
+          child: Device.isMobile || Device.isOhos
+              ? // 手机和鸿蒙暂时不显示浮动工具条
+                _buildEditor(editorState, curState, context)
+              : // 选中内容时的浮动工具条
+                FloatingToolbar(
+                  items: [
+                    paragraphItem,
+                    ...headingItems,
+                    ...markdownFormatItems,
+                    quoteItem,
+                    bulletedListItem,
+                    numberedListItem,
+                    linkItem,
+                    buildTextColorItem(),
+                    buildHighlightColorItem(),
+                    ...textDirectionItems,
+                    ...alignmentItems,
+                  ],
+                  // 浮动条的构建
+                  // toolbarBuilder: MyEditorState.showFloatingToolbar
+                  //     ? null
+                  //     : (_, _, _, _) => SizedBox(),
+                  // 每项的构建
+                  tooltipBuilder: (context, _, message, child) {
+                    return Tooltip(
+                      message: message,
+                      preferBelow: true,
+                      child: child,
+                    );
+                  },
+                  editorState: editorState,
+                  textDirection: widget.textDirection,
+                  editorScrollController: curState.editorScrollController,
+                  child: _buildEditor(editorState, curState, context),
+                ),
         ),
       ],
     );
