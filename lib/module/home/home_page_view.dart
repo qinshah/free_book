@@ -5,6 +5,7 @@ import 'package:free_book/function/context_extension.dart';
 import 'package:free_book/function/storage.dart';
 import 'package:free_book/module/root/root_logic.dart';
 import 'package:free_book/module/trash/trash_page.dart';
+import 'package:free_book/widget/ink_button.dart';
 import 'package:provider/provider.dart';
 
 import '../edit/edit_page_view.dart';
@@ -30,23 +31,24 @@ class _HomePageViewState extends State<HomePageView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('自由记')),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (BuildContext context) => EditPageView.newDoc(),
-                ),
-              );
-              _logic.loadDocList();
-            },
-            child: Icon(Icons.add),
-          ),
-          SizedBox(height: 56),
-        ],
-      ),
+      // 悬浮按钮会在鸿蒙上导致崩溃，搞不懂，先去掉
+      // floatingActionButton: Column(
+      //   mainAxisAlignment: MainAxisAlignment.end,
+      //   children: [
+      //     FloatingActionButton(
+      //       onPressed: () async {
+      //         await Navigator.of(context).push(
+      //           MaterialPageRoute(
+      //             builder: (BuildContext context) => EditPageView.newDoc(),
+      //           ),
+      //         );
+      //         _logic.loadDocList();
+      //       },
+      //       child: Icon(Icons.add),
+      //     ),
+      //     SizedBox(height: 56),
+      //   ],
+      // ),
       body: Builder(
         builder: (context) {
           final curState = context.watch<HomePageLogic>().curState;
@@ -55,7 +57,6 @@ class _HomePageViewState extends State<HomePageView> {
             controller: context.read<RootLogic>().curState.scrollCntlr,
             padding: const EdgeInsets.all(16),
             children: [
-              SizedBox(height: 22),
               Text('示例', style: TextStyle(fontSize: 20)),
               SizedBox(height: 6),
               _ExampleDocItem('assets/示例文档.json'),
@@ -73,7 +74,24 @@ class _HomePageViewState extends State<HomePageView> {
               _buildDocList(curState.recentDocPaths),
               // ————————————
               SizedBox(height: 22),
-              Text('全部', style: TextStyle(fontSize: 20)),
+              Row(
+                children: [
+                  Text('全部', style: TextStyle(fontSize: 20)),
+                  Spacer(),
+                  TextButton(
+                    onPressed: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              EditPageView.newDoc(),
+                        ),
+                      );
+                      _logic.loadDocList();
+                    },
+                    child: Text('新建空白'),
+                  ),
+                ],
+              ),
               SizedBox(height: 6),
               _buildDocList(curState.docPaths),
               SizedBox(height: 22),
@@ -273,7 +291,7 @@ class _DocItemState extends State<_DocItem> {
 
   Future<void> _openDoc(BuildContext context) async {
     // 还是再确认一下是否在打开前文件被删除了
-    if (!_file.existsSync()) {  
+    if (!_file.existsSync()) {
       context.showErrorToast('文档源文件已丢失，打开失败');
       _logic.loadDocList(); // 只需要重新加载列表，不存在的自动变灰
       return;

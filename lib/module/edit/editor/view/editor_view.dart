@@ -262,8 +262,8 @@ class _EditorViewState extends State<EditorView> {
         blockSelectionAreaMargin: (_) =>
             const EdgeInsets.symmetric(vertical: 1.0),
       );
-
-      if (key != PageBlockKeys.type) {
+      // 鸿蒙拖动块有问题暂不显示
+      if (key != PageBlockKeys.type && !Device.isOhos) {
         // 每行前面的拖动块
         value.showActions = (_) => true;
         value.actionBuilder = (context, actionState) {
