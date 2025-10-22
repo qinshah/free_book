@@ -29,6 +29,7 @@ class _ToolBarState extends State<ToolBar> with TickerProviderStateMixin {
           ? null
           : (_) => MyEditorState.expansibleCntlr.collapse(),
       child: ExpansionTile(
+        initiallyExpanded: true,
         showTrailingIcon: false,
         backgroundColor: theme.bottomNavigationBarTheme.backgroundColor,
         collapsedBackgroundColor:

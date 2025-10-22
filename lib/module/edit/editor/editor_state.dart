@@ -12,7 +12,7 @@ class MyEditorState extends ViewState {
 
   static Timer? floatingToolbarTimer;
 
-  static double toolBarHeight = 100;
+  static double toolBarHeight = 152;
 
   StreamSubscription<EditorTransactionValue>? transactionStream;
 
