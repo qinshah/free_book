@@ -20,7 +20,18 @@ class EditPageLogic extends ViewLogic<EditPageState> {
 
   void loadDocInfo(String? docPath, bool isDraft) {
     if (isDraft) {
-      _setDraftDoc();
+      final draftPath = Storage.i.draftPath;
+      if (!File(draftPath).existsSync()) {
+        final emptyDocString = '''
+{"document":{"type":"page","children":[{"type":"paragraph","data":{"delta":[{"insert":"这是草稿，离开此页面自动保存"}]}}]}}
+''';
+        File(draftPath).writeAsStringSync(emptyDocString);
+      }
+      rebuildState(
+        curState
+          ..docPath = draftPath
+          ..docName = '草稿',
+      );
       return;
     }
     final name = docPath?.split('/').last.split('.').first;
@@ -33,19 +44,6 @@ class EditPageLogic extends ViewLogic<EditPageState> {
           ..docName = name,
       );
     }
-  }
-
-  void _setDraftDoc() {
-    final draftPath = Storage.i.draftPath;
-    if (!File(draftPath).existsSync()) {
-      final emptyDocString = jsonEncode(Document.blank().toJson());
-      File(draftPath).writeAsStringSync(emptyDocString);
-    }
-    rebuildState(
-      curState
-        ..docPath = draftPath
-        ..docName = '草稿',
-    );
   }
 
   Future<void> saveDoc(String path, Document doc) async {

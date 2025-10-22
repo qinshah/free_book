@@ -27,6 +27,8 @@ class EditorView extends StatefulWidget {
 
 class _EditorViewState extends State<EditorView> {
   late final _logic = context.read<EditorLogic>();
+
+  // final _focusNode = FocusNode();
   @override
   void initState() {
     super.initState();
@@ -147,6 +149,7 @@ class _EditorViewState extends State<EditorView> {
     return Directionality(
       textDirection: widget.textDirection,
       child: AppFlowyEditor(
+        // focusNode: _focusNode,
         autoFocus: widget.docPath == null,
         showMagnifier: true, //显示放大镜，only works on iOS or Android.
         editorState: editorState,
@@ -158,7 +161,7 @@ class _EditorViewState extends State<EditorView> {
         enableAutoComplete: true, // 自动完成，类似ai代码提示
         autoCompleteTextProvider: _buildAutoCompleteTextProvider,
         dropTargetStyle: const AppFlowyDropTargetStyle(color: Colors.red),
-        // footer: _buildFooter(editorState), // 页脚
+        // footer: _buildFooter(editorState), // 编辑器底部
       ),
     );
   }
@@ -188,19 +191,17 @@ class _EditorViewState extends State<EditorView> {
 
   // Widget _buildFooter(EditorState editorState) {
   //   return SizedBox(
-  //     height: 100,
+  //     height: MediaQuery.of(context).size.height / 1.5,
   //     child: GestureDetector(
   //       behavior: HitTestBehavior.opaque,
-  //       onTap: () async {
-  //         // check if the document is empty, if so, add a new paragraph block.
-  //         if (editorState.document.root.children.isEmpty) {
-  //           final transaction = editorState.transaction;
-  //           transaction.insertNode([0], paragraphNode());
-  //           await editorState.apply(transaction);
-  //           WidgetsBinding.instance.addPostFrameCallback((_) {
-  //             editorState.selection = Selection.collapsed(Position(path: [0]));
-  //           });
-  //         }
+  //       onTap: () {
+  //         final document = editorState.document;
+  //         final lastNode = document.root.children.last; // 最后一个节点
+  //         final end = lastNode.delta?.length ?? 0; // 节点文本长度
+  //         final newSel = Selection.collapsed(
+  //           Position(path: lastNode.path, offset: end),
+  //         );
+  //         editorState.updateSelectionWithReason(newSel);
   //       },
   //     ),
   //   );

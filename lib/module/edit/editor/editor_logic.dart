@@ -22,7 +22,7 @@ class EditorLogic extends ViewLogic<MyEditorState> {
     bool isDraft,
   ) async {
     final editPageLogic = context.read<EditPageLogic>();
-    EditorState editorState = await _loadEditorState(docPath, context);
+    final editorState = await _loadEditorState(docPath, context);
     // 日志
     editorState.logConfiguration
       ..handler = debugPrint
@@ -57,7 +57,7 @@ class EditorLogic extends ViewLogic<MyEditorState> {
         return EditorState(document: Document.fromJson(json));
       }
     } catch (e) {
-      context.showToast('文档打开失败，路径\n：$docPath:\n$e', ToastType.warn);
+      context.showToast('文档打开失败，自动创建空文档\n$e', ToastType.warn);
       return await _loadEmptyEditorState();
     }
   }
@@ -65,7 +65,7 @@ class EditorLogic extends ViewLogic<MyEditorState> {
   Future<EditorState> _loadEmptyEditorState() async {
     final editorState = EditorState(document: Document.blank());
     final transaction = editorState.transaction;
-    transaction.insertNode([0], paragraphNode());
+    transaction.insertNode([0], paragraphNode(text: '这是新建的空白文档'));
     await editorState.apply(transaction);
     return editorState;
   }
