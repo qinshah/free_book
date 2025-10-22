@@ -36,18 +36,8 @@ class _RootViewState extends State<RootView> {
 
   @override
   Widget build(BuildContext context) {
-    return OrientationBuilder(
-      builder: (context, orientation) {
-        final vertical = orientation == Orientation.portrait;
-        if (vertical) {
-          Screen.setNormalUiMode();
-          return _buildVertical(context);
-        }
-        // else横屏，设为全屏
-        Screen.setFullUiMode();
-        return _buildHorizontal(context);
-      },
-    );
+    final vertical = MediaQuery.of(context).orientation == Orientation.portrait;
+    return vertical ? _buildVertical(context) : _buildHorizontal(context);
   }
 
   SafeArea _buildHorizontal(BuildContext context) {
