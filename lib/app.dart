@@ -1,5 +1,6 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:appflowy_editor/appflowy_editor.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -69,21 +70,18 @@ class _AppState extends State<App> {
                         rootLogic.curState.draftLogic?.curState;
                     if (curDraftState?.saved == false) {
                       final draftPath = Storage.i.draftPath;
-                      await context.showToast(
-                        '正在保存草稿更改',
-                        duration: Durations.medium1,
-                      );
-                      await rootLogic.curState.draftLogic?.saveDoc(
+                      rootLogic.curState.draftLogic?.saveDoc(
                         draftPath,
                         rootLogic.curState.draftState!.document,
                       );
+                      await context.showToast('正在保存草稿更改');
                       // ignore: use_build_context_synchronously
-                      await context.showToast(
-                        '草稿更改已保存，即将推出',
-                        duration: Durations.medium1,
-                      );
+                      await context.showSuccessToast('草稿更改已保存，即将推出');
                     }
-                    SystemNavigator.pop();
+                    kDebugMode
+                        // ignore: use_build_context_synchronously
+                        ? context.showToast('模拟退出应用')
+                        : SystemNavigator.pop();
                   } else {
                     _lastBackPressed = now;
                     context.showToast('再按一次返回退出', duration: _backDifference);
