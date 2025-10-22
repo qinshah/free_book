@@ -59,7 +59,7 @@ class _EditPageViewState extends State<EditPageView>
             builder: (context) {
               final curState = context.watch<EditPageLogic>().curState;
               return PopScope(
-                canPop: curState.saved,
+                canPop: curState.saved || widget.isDraft,
                 onPopInvokedWithResult: (didPop, _) {
                   if (didPop) return;
                   _showConfirmPopDialog(context);
