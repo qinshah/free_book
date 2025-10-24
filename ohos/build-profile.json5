@@ -5,13 +5,13 @@
         "name": "default",
         "type": "HarmonyOS",
         "material": {
-          "certpath": "/Users/qshh/.ohos/config/default_ohos_aEPMjt941PgBKeVNmeZ9e6uCvmpUVKyqmYyeSo3MbRg=.cer",
-          "keyAlias": "debugKey",
-          "keyPassword": "0000001B312B4352E87FC917B86A5B06599547946A49C1FD9F1A89116BD6C3D8F3669FCF4DBEF46F5DECBE",
-          "profile": "/Users/qshh/.ohos/config/default_ohos_aEPMjt941PgBKeVNmeZ9e6uCvmpUVKyqmYyeSo3MbRg=.p7b",
+          "storeFile": "/Users/qshh/Desktop/证书/key.p12",
+          "storePassword": "0000001C34F56CDFF5DD47AEC5D2BDE1D83DEF85A1B40C4186E8FA8F83ADFFE76691302F32170C987437F2A3",
+          "keyAlias": "Key",
+          "keyPassword": "0000001C8027BDD07A1F287FF9643A85030F94E2A9FE3C8F503FE56F2C4DAE10085212500AD068845F253F3A",
           "signAlg": "SHA256withECDSA",
-          "storeFile": "/Users/qshh/.ohos/config/default_ohos_aEPMjt941PgBKeVNmeZ9e6uCvmpUVKyqmYyeSo3MbRg=.p12",
-          "storePassword": "0000001B4E9A68374B63FAB7E753C2CF020DCE1BA2636EBB0258E0F5D4C9149D5814407334A4C157B788B7"
+          "profile": "/Users/qshh/Desktop/证书/自由记Release.p7b",
+          "certpath": "/Users/qshh/Desktop/证书/key.cer"
         }
       }
     ],

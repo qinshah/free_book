@@ -5,7 +5,6 @@ import 'package:free_book/function/context_extension.dart';
 import 'package:free_book/function/storage.dart';
 import 'package:free_book/module/root/root_logic.dart';
 import 'package:free_book/module/trash/trash_page.dart';
-import 'package:free_book/widget/ink_button.dart';
 import 'package:provider/provider.dart';
 
 import '../edit/edit_page_view.dart';
@@ -59,7 +58,7 @@ class _HomePageViewState extends State<HomePageView> {
             children: [
               Text('示例', style: TextStyle(fontSize: 20)),
               SizedBox(height: 6),
-              _ExampleDocItem('assets/示例文档.json'),
+              _ExampleDocItem('assets/更新日志.json'),
               // ————————————
               SizedBox(height: 22),
               Row(

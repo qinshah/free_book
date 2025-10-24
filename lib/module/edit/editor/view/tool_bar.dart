@@ -309,7 +309,12 @@ class _TextStyleViewState extends State<_TextStyleView> {
   ) {
     return InkWell(
       borderRadius: BorderRadius.circular(6),
-      onTap: () => setState(() => editorState.toggleAttribute(decoration.type)),
+      onTap: () async {
+        await editorState.toggleAttribute(decoration.type);
+        setState(() {
+          // 刷新
+        });
+      },
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(6),

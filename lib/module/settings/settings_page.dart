@@ -36,18 +36,18 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
               ),
-              ListTile(
-                title: const Text('主色调'),
-                subtitle: const Text('切换功能待开发'),
-                trailing: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ),
+              // ListTile(
+              //   title: const Text('主色调'),
+              //   subtitle: const Text('切换功能待开发'),
+              //   trailing: Container(
+              //     width: 24,
+              //     height: 24,
+              //     decoration: BoxDecoration(
+              //       color: Theme.of(context).colorScheme.primary,
+              //       shape: BoxShape.circle,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

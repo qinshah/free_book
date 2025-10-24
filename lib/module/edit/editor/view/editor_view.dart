@@ -179,7 +179,7 @@ class _EditorViewState extends State<EditorView> {
       selectionColor: theme.primaryColor.withAlpha(166),
       textStyleConfiguration: TextStyleConfiguration(
         text: textStyle, //普通
-        bold: textStyle.copyWith(fontWeight: FontWeight.w800), //加粗
+        bold: textStyle.copyWith(fontWeight: FontWeight.bold), //加粗
       ),
       padding: EdgeInsets.only(left: 6, right: 16),
       //最大宽度，导致换行的宽度，如果某行超过父约束依旧会换行

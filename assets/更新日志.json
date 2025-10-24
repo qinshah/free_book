@@ -1,0 +1,411 @@
+{
+    "document": {
+        "type": "page",
+        "children": [
+            {
+                "type": "heading",
+                "data": {
+                    "delta": [
+                        {
+                            "insert": "此文档记录本应用的",
+                            "attributes": {
+                                "bold": false
+                            }
+                        },
+                        {
+                            "insert": "版本更新信息",
+                            "attributes": {
+                                "bold": false,
+                                "bg_color": "0x9affeb3b"
+                            }
+                        }
+                    ],
+                    "level": 1
+                }
+            },
+            {
+                "type": "paragraph",
+                "data": {
+                    "delta": [
+                        {
+                            "insert": "······"
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "heading",
+                "data": {
+                    "delta": [
+                        {
+                            "insert": "v1.0.0",
+                            "attributes": {
+                                "bold": false,
+                                "italic": false,
+                                "bg_color": "0x9a4caf50"
+                            }
+                        }
+                    ],
+                    "level": 2
+                }
+            },
+            {
+                "type": "paragraph",
+                "data": {
+                    "delta": [
+                        {
+                            "insert": "第一个",
+                            "attributes": {
+                                "font_color": "0xfff44336"
+                            }
+                        },
+                        {
+                            "insert": "正式版"
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "heading",
+                "data": {
+                    "delta": [
+                        {
+                            "insert": "主体功能"
+                        }
+                    ],
+                    "level": 2
+                }
+            },
+            {
+                "type": "bulleted_list",
+                "data": {
+                    "delta": [
+                        {
+                            "insert": "支持"
+                        },
+                        {
+                            "insert": "草稿文档",
+                            "attributes": {
+                                "font_color": "0xff9e9e9e"
+                            }
+                        },
+                        {
+                            "insert": "功能，支持文档"
+                        },
+                        {
+                            "insert": "新建",
+                            "attributes": {
+                                "font_color": "0xff795548"
+                            }
+                        },
+                        {
+                            "insert": "、"
+                        },
+                        {
+                            "insert": "保存",
+                            "attributes": {
+                                "font_color": "0xff4caf50"
+                            }
+                        },
+                        {
+                            "insert": "、"
+                        },
+                        {
+                            "insert": "另存为",
+                            "attributes": {
+                                "font_color": "0xff2196f3"
+                            }
+                        },
+                        {
+                            "insert": " 、"
+                        },
+                        {
+                            "insert": "重命名",
+                            "attributes": {
+                                "font_color": "0xff9c27b0"
+                            }
+                        },
+                        {
+                            "insert": "和"
+                        },
+                        {
+                            "insert": "回收站",
+                            "attributes": {
+                                "font_color": "0xffe91e63"
+                            }
+                        },
+                        {
+                            "insert": "功能，"
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "bulleted_list",
+                "data": {
+                    "delta": [
+                        {
+                            "insert": "草稿自动保存、提醒保存、自动深色模式等细节功能",
+                            "attributes": {
+                                "bg_color": "0x9af44336"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "heading",
+                "data": {
+                    "delta": [
+                        {
+                            "insert": "编辑器"
+                        },
+                        {
+                            "insert": "功",
+                            "attributes": {
+                                "bold": false
+                            }
+                        },
+                        {
+                            "insert": "能"
+                        }
+                    ],
+                    "level": 2
+                }
+            },
+            {
+                "type": "bulleted_list",
+                "data": {
+                    "delta": [
+                        {
+                            "insert": "内容类型支持"
+                        },
+                        {
+                            "insert": "标题",
+                            "attributes": {
+                                "underline": true,
+                                "bg_color": "0x9a9e9e9e"
+                            }
+                        },
+                        {
+                            "insert": "1",
+                            "attributes": {
+                                "bold": false,
+                                "underline": true,
+                                "bg_color": "0x9a9e9e9e"
+                            }
+                        },
+                        {
+                            "insert": "～",
+                            "attributes": {
+                                "underline": true,
+                                "bg_color": "0x9a9e9e9e"
+                            }
+                        },
+                        {
+                            "insert": "3",
+                            "attributes": {
+                                "bold": false,
+                                "underline": true,
+                                "bg_color": "0x9a9e9e9e"
+                            }
+                        },
+                        {
+                            "insert": "、",
+                            "attributes": {
+                                "underline": true
+                            }
+                        },
+                        {
+                            "insert": "无序列表",
+                            "attributes": {
+                                "underline": true,
+                                "bg_color": "0x9a795548"
+                            }
+                        },
+                        {
+                            "insert": "、",
+                            "attributes": {
+                                "underline": true
+                            }
+                        },
+                        {
+                            "insert": "有序列表",
+                            "attributes": {
+                                "underline": true,
+                                "bg_color": "0x9affeb3b"
+                            }
+                        },
+                        {
+                            "insert": "、",
+                            "attributes": {
+                                "underline": true
+                            }
+                        },
+                        {
+                            "insert": "复选框",
+                            "attributes": {
+                                "underline": true,
+                                "bg_color": "0x9a4caf50"
+                            }
+                        },
+                        {
+                            "insert": "和",
+                            "attributes": {
+                                "underline": true
+                            }
+                        },
+                        {
+                            "insert": "引用",
+                            "attributes": {
+                                "underline": true,
+                                "bg_color": "0x9a2196f3"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "bulleted_list",
+                "data": {
+                    "delta": [
+                        {
+                            "insert": "文字样式",
+                            "attributes": {
+                                "bold": false
+                            }
+                        },
+                        {
+                            "insert": "支持"
+                        },
+                        {
+                            "insert": "粗体",
+                            "attributes": {
+                                "bold": true,
+                                "italic": false
+                            }
+                        },
+                        {
+                            "insert": "、",
+                            "attributes": {
+                                "bold": true,
+                                "italic": false
+                            }
+                        },
+                        {
+                            "insert": "斜体、",
+                            "attributes": {
+                                "bold": false,
+                                "italic": true
+                            }
+                        },
+                        {
+                            "insert": "下划线",
+                            "attributes": {
+                                "bold": false,
+                                "italic": false,
+                                "underline": true
+                            }
+                        },
+                        {
+                            "insert": "和",
+                            "attributes": {
+                                "bold": false,
+                                "italic": false,
+                                "underline": false
+                            }
+                        },
+                        {
+                            "insert": "删除线",
+                            "attributes": {
+                                "bold": false,
+                                "italic": false,
+                                "underline": false,
+                                "strikethrough": true
+                            }
+                        },
+                        {
+                            "insert": "以及",
+                            "attributes": {
+                                "bold": false,
+                                "italic": false,
+                                "underline": false,
+                                "strikethrough": false
+                            }
+                        },
+                        {
+                            "insert": "文字颜色",
+                            "attributes": {
+                                "bold": false,
+                                "italic": false,
+                                "underline": false,
+                                "strikethrough": false,
+                                "font_color": "0xff2196f3"
+                            }
+                        },
+                        {
+                            "insert": "和",
+                            "attributes": {
+                                "bold": false,
+                                "italic": false,
+                                "underline": false,
+                                "strikethrough": false
+                            }
+                        },
+                        {
+                            "insert": "文字背景色",
+                            "attributes": {
+                                "bold": false,
+                                "italic": false,
+                                "underline": false,
+                                "strikethrough": false,
+                                "bg_color": "0x9a795548"
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "heading",
+                "data": {
+                    "delta": [
+                        {
+                            "insert": "v0.1.0",
+                            "attributes": {
+                                "font_color": "0xff9e9e9e",
+                                "strikethrough": true
+                            }
+                        }
+                    ],
+                    "level": 2
+                }
+            },
+            {
+                "type": "paragraph",
+                "data": {
+                    "delta": [
+                        {
+                            "insert": "早期内部版本",
+                            "attributes": {
+                                "font_color": "0xff9e9e9e",
+                                "strikethrough": true
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "type": "paragraph",
+                "data": {
+                    "delta": []
+                }
+            },
+            {
+                "type": "paragraph",
+                "data": {
+                    "delta": []
+                }
+            }
+        ]
+    }
+}
