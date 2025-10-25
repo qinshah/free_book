@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:free_book/function/context_extension.dart';
@@ -79,10 +80,22 @@ class _HomePageViewState extends State<HomePageView> {
                   Spacer(),
                   TextButton(
                     onPressed: () async {
+                      final path = (await openFile())?.path;
+                      if (path == null || !context.mounted) return;
                       await Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              BookView.newDoc(),
+                          builder: (BuildContext context) => BookView(path),
+                        ),
+                      );
+                      _logic.loadDocList();
+                    },
+                    child: Text('导入文档'),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => BookView.newDoc(),
                         ),
                       );
                       _logic.loadDocList();
@@ -197,6 +210,15 @@ class _DocItemState extends State<_DocItem> {
   late final _logic = context.read<HomePageLogic>();
   late final _menuEntries = <ContextMenuEntry>[
     MenuItem(
+      label: '文件路径',
+      icon: Icons.open_in_new_outlined,
+      onSelected: () => showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+            AlertDialog(content: Text(widget.docPath)),
+      ),
+    ),
+    MenuItem(
       label: '重命名',
       icon: Icons.edit_outlined,
       onSelected: () => showDialog(
@@ -295,9 +317,9 @@ class _DocItemState extends State<_DocItem> {
       _logic.loadDocList(); // 只需要重新加载列表，不存在的自动变灰
       return;
     }
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => BookView(widget.docPath)),
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => BookView(widget.docPath)));
     if (context.mounted) {
       // 刷新列表
       context.read<HomePageLogic>().loadDocList();

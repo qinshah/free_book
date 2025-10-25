@@ -46,7 +46,7 @@ class BookLogic extends ViewLogic<BookState> {
     }
   }
 
-  Future<void> saveDoc(String path, Document doc) async {
+  Future<void> saveToFile(String path, Document doc) async {
     await File(path).writeAsString(jsonEncode(doc.toJson()));
     rebuildState(curState..saved = true);
   }

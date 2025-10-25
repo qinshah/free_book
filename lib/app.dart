@@ -70,7 +70,7 @@ class _AppState extends State<App> {
                         rootLogic.curState.draftLogic?.curState;
                     if (curDraftState?.saved == false) {
                       final draftPath = Storage.i.draftPath;
-                      rootLogic.curState.draftLogic?.saveDoc(
+                      rootLogic.curState.draftLogic?.saveToFile(
                         draftPath,
                         rootLogic.curState.draftState!.document,
                       );

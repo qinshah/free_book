@@ -18,7 +18,7 @@ class RootLogic extends ViewLogic<RootState> {
     final leaveDraft = curIndex == 1 && index != 1;
     if (leaveDraft && !curState.draftLogic!.curState.saved) {
       final draftPath = Storage.i.draftPath;
-      await curState.draftLogic!.saveDoc(
+      await curState.draftLogic!.saveToFile(
         draftPath,
         curState.draftState!.document,
       );
