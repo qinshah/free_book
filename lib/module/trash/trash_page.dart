@@ -24,6 +24,7 @@ class _TrashPageState extends State<TrashPage> {
           }
           if (asyncSnapshot.hasData) {
             final files = asyncSnapshot.data!;
+            if (files.isEmpty) return Center(child: Text('回收站为空'));
             return ListView.builder(
               itemCount: files.length,
               itemBuilder: (context, index) {

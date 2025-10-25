@@ -7,7 +7,7 @@ import 'package:free_book/module/root/root_logic.dart';
 import 'package:free_book/module/trash/trash_page.dart';
 import 'package:provider/provider.dart';
 
-import '../edit/edit_page_view.dart';
+import '../book/book_view.dart';
 import 'home_page_logic.dart';
 
 class HomePageView extends StatefulWidget {
@@ -56,14 +56,14 @@ class _HomePageViewState extends State<HomePageView> {
             controller: context.read<RootLogic>().curState.scrollCntlr,
             padding: const EdgeInsets.all(16),
             children: [
-              Text('示例', style: TextStyle(fontSize: 20)),
+              Text('示例文档', style: TextStyle(fontSize: 20)),
               SizedBox(height: 6),
               _ExampleDocItem('assets/更新日志.json'),
               // ————————————
               SizedBox(height: 22),
               Row(
                 children: [
-                  Text('最近', style: TextStyle(fontSize: 20)),
+                  Text('最近文档', style: TextStyle(fontSize: 20)),
                   Spacer(),
                   if (curState.recentDocPaths.isNotEmpty)
                     TextButton(onPressed: _logic.clearRec, child: Text('清空记录')),
@@ -75,14 +75,14 @@ class _HomePageViewState extends State<HomePageView> {
               SizedBox(height: 22),
               Row(
                 children: [
-                  Text('全部', style: TextStyle(fontSize: 20)),
+                  Text('全部文档', style: TextStyle(fontSize: 20)),
                   Spacer(),
                   TextButton(
                     onPressed: () async {
                       await Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (BuildContext context) =>
-                              EditPageView.newDoc(),
+                              BookView.newDoc(),
                         ),
                       );
                       _logic.loadDocList();
@@ -176,7 +176,7 @@ class _ExampleDocItem extends StatelessWidget {
   Future<void> _openDoc(BuildContext context) async {
     await Navigator.of(
       context,
-    ).push(MaterialPageRoute(builder: (context) => EditPageView(assetPath)));
+    ).push(MaterialPageRoute(builder: (context) => BookView(assetPath)));
     if (context.mounted) {
       // 刷新列表
       context.read<HomePageLogic>().loadDocList();
@@ -296,7 +296,7 @@ class _DocItemState extends State<_DocItem> {
       return;
     }
     await Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => EditPageView(widget.docPath)),
+      MaterialPageRoute(builder: (context) => BookView(widget.docPath)),
     );
     if (context.mounted) {
       // 刷新列表

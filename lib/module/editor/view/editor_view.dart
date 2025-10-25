@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:free_book/function/device.dart';
-import 'package:free_book/module/edit/editor/drag_to_reorder_editor.dart';
-import 'package:free_book/module/edit/editor/editor_state.dart';
-import 'package:free_book/module/edit/editor/view/tool_bar.dart';
+import 'package:free_book/module/editor/drag_to_reorder_editor.dart';
+import 'package:free_book/module/editor/editor_state.dart';
+import 'package:free_book/module/editor/view/tool_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../editor_logic.dart';

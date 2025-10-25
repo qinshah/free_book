@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:forui/assets.dart';
-import 'package:free_book/module/edit/editor/editor_logic.dart';
-import 'package:free_book/module/edit/editor/editor_state.dart';
+import 'package:free_book/module/editor/editor_logic.dart';
+import 'package:free_book/module/editor/editor_state.dart';
 import 'package:provider/provider.dart';
 
 class ToolBar extends StatefulWidget {

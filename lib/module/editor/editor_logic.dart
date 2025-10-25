@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:free_book/function/context_extension.dart';
 import 'package:free_book/function/state_management.dart';
-import 'package:free_book/module/edit/edit_page_logic.dart';
+import 'package:free_book/module/book/book_logic.dart';
 import 'package:free_book/module/root/root_logic.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +21,7 @@ class EditorLogic extends ViewLogic<MyEditorState> {
     BuildContext context,
     bool isDraft,
   ) async {
-    final editPageLogic = context.read<EditPageLogic>();
+    final editPageLogic = context.read<BookLogic>();
     final editorState = await _loadEditorState(docPath, context);
     // 日志
     editorState.logConfiguration

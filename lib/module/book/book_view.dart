@@ -2,38 +2,38 @@ import 'package:appflowy_editor/appflowy_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:free_book/function/context_extension.dart';
 import 'package:free_book/function/storage.dart';
-import 'package:free_book/module/edit/edit_page_state.dart';
-import 'package:free_book/module/edit/editor/editor_logic.dart';
-import 'package:free_book/module/edit/editor/editor_state.dart';
+import 'package:free_book/module/book/book_state.dart';
+import 'package:free_book/module/editor/editor_logic.dart';
+import 'package:free_book/module/editor/editor_state.dart';
 import 'package:free_book/module/home/home_page_logic.dart';
 import 'package:free_book/module/root/root_logic.dart';
 import 'package:free_book/widget/ink_button.dart';
 import 'package:provider/provider.dart';
 
-import 'edit_page_logic.dart';
-import 'editor/view/editor_view.dart';
+import 'book_logic.dart';
+import '../editor/view/editor_view.dart';
 
-class EditPageView extends StatefulWidget {
-  const EditPageView(this.initDocPath, {super.key}) : isDraft = false;
+class BookView extends StatefulWidget {
+  const BookView(this.initDocPath, {super.key}) : isDraft = false;
 
-  const EditPageView.newDoc({super.key}) : initDocPath = null, isDraft = false;
+  const BookView.newDoc({super.key}) : initDocPath = null, isDraft = false;
 
-  const EditPageView.draft({super.key}) : initDocPath = null, isDraft = true;
+  const BookView.draft({super.key}) : initDocPath = null, isDraft = true;
 
   final String? initDocPath;
 
   final bool isDraft;
 
   @override
-  State<EditPageView> createState() => _EditPageViewState();
+  State<BookView> createState() => _BookViewState();
 }
 
-class _EditPageViewState extends State<EditPageView>
+class _BookViewState extends State<BookView>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-  final _logic = EditPageLogic(EditPageState());
+  final _logic = BookLogic(BookState());
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class _EditPageViewState extends State<EditPageView>
           create: (_) => EditorLogic(MyEditorState()),
           child: Builder(
             builder: (context) {
-              final curState = context.watch<EditPageLogic>().curState;
+              final curState = context.watch<BookLogic>().curState;
               return PopScope(
                 canPop: curState.saved || widget.isDraft,
                 onPopInvokedWithResult: (didPop, _) {
@@ -82,11 +82,11 @@ class _EditPageViewState extends State<EditPageView>
                       ],
                     ),
                     toolbarHeight: 36,
-                    title: SelectableText(curState.docName, maxLines: 1),
+                    title: SelectableText(curState.name, maxLines: 1),
                     // TODO 重构UI
                     actions: [_ToolButtons()],
                   ),
-                  body: EditorView(curState.docPath, isDraft: widget.isDraft),
+                  body: EditorView(curState.filePath, isDraft: widget.isDraft),
                 ),
               );
             },
@@ -123,8 +123,8 @@ class _ToolButtons extends StatelessWidget {
   const _ToolButtons();
   @override
   Widget build(BuildContext context) {
-    final logic = context.watch<EditPageLogic>();
-    final path = logic.curState.docPath;
+    final logic = context.watch<BookLogic>();
+    final path = logic.curState.filePath;
     final doc = context.watch<EditorLogic>().curState.editorState?.document;
     if (doc == null) return const SizedBox();
     return Row(
@@ -178,7 +178,7 @@ class _SaveToDialog extends StatefulWidget {
 }
 
 class __SaveToDialogState extends State<_SaveToDialog> {
-  late final _logic = context.read<EditPageLogic>();
+  late final _logic = context.read<BookLogic>();
   String? _error = '';
   String _name = '';
   @override
@@ -240,7 +240,7 @@ class _SaveAsDialog extends StatefulWidget {
 }
 
 class _SaveAsDialogState extends State<_SaveAsDialog> {
-  late final _logic = context.read<EditPageLogic>();
+  late final _logic = context.read<BookLogic>();
   String? _error = '';
   @override
   void initState() {
@@ -327,7 +327,7 @@ class _SaveAsDialogState extends State<_SaveAsDialog> {
             Navigator.of(context).pop();
             Navigator.of(
               context,
-            ).push(MaterialPageRoute(builder: (context) => EditPageView(path)));
+            ).push(MaterialPageRoute(builder: (context) => BookView(path)));
           },
         ),
       ],

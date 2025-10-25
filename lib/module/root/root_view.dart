@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../data_model/page.dart';
-import '../edit/edit_page_view.dart';
+import '../book/book_view.dart';
 import '../home/home_page_view.dart';
 import '../settings/settings_page.dart';
 import 'root_logic.dart';
@@ -28,7 +28,7 @@ class _RootViewState extends State<RootView> {
     AppPage(
       name: '草稿',
       icon: Icon(Icons.draw_outlined),
-      view: EditPageView.draft(),
+      view: BookView.draft(),
     ),
     AppPage(name: '设置', icon: Icon(Icons.settings), view: SettingsPage()),
   };

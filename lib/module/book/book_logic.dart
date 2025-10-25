@@ -8,10 +8,10 @@ import 'package:free_book/function/storage.dart';
 import 'package:free_book/module/home/home_page_logic.dart';
 import 'package:provider/provider.dart';
 
-import 'edit_page_state.dart';
+import 'book_state.dart';
 
-class EditPageLogic extends ViewLogic<EditPageState> {
-  EditPageLogic(super.curState);
+class BookLogic extends ViewLogic<BookState> {
+  BookLogic(super.curState);
 
   @override
   void rememberDispose() {
@@ -29,19 +29,19 @@ class EditPageLogic extends ViewLogic<EditPageState> {
       }
       rebuildState(
         curState
-          ..docPath = draftPath
-          ..docName = '草稿',
+          ..filePath = draftPath
+          ..name = '草稿',
       );
       return;
     }
     final name = docPath?.split('/').last.split('.').first;
     if (name == null || name.isEmpty) {
-      rebuildState(curState..docPath = docPath);
+      rebuildState(curState..filePath = docPath);
     } else {
       rebuildState(
         curState
-          ..docPath = docPath
-          ..docName = name,
+          ..filePath = docPath
+          ..name = name,
       );
     }
   }
