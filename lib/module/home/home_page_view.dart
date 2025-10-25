@@ -29,7 +29,7 @@ class _HomePageViewState extends State<HomePageView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('自由记')),
+      appBar: AppBar(title: Text('自由文档')),
       // 悬浮按钮会在鸿蒙上导致崩溃，搞不懂，先去掉
       // floatingActionButton: Column(
       //   mainAxisAlignment: MainAxisAlignment.end,

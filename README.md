@@ -1,4 +1,4 @@
-# 自由记
+# 自由文档
 
 # 基于 Appflowy Editor 开发
 
